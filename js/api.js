@@ -8,6 +8,7 @@ const PERMISSIONS = [
   { key: 'ecrire_appreciations', label: 'Noter les agents', help: 'Ajouter des points d\'appréciation.' },
   { key: 'ecrire_formations', label: 'Valider des formations', help: 'Enregistrer les formations suivies.' },
   { key: 'ecrire_sanctions', label: 'Émettre des sanctions', help: 'Créer, modifier et lever des sanctions.' },
+  { key: 'ecrire_first_lincoln', label: 'Évaluer les First Lincoln', help: 'Remplir et modifier les fiches d\'évaluation First Lincoln.' },
   { key: 'gerer_carriere', label: 'Gérer les agents et carrières', help: 'Ajouter un agent, promouvoir, muter, modifier une fiche.' },
   { key: 'gerer_parametres', label: 'Modifier les paramètres', help: 'Grades, formations, sanctions, divisions, critères.' },
   { key: 'gerer_utilisateurs', label: 'Gérer les comptes et rôles', help: 'Valider les inscriptions, attribuer les rôles.' },
@@ -75,7 +76,7 @@ function supabaseApi(cfg) {
 
 /* ------------------------------------------------------------------ Mode démonstration */
 function demoApi() {
-  const KEY = 'sasp-demo-v1';
+  const KEY = 'sasp-demo-v2';
   const AUTH = 'sasp-demo-auth';
   const store = {
     get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
@@ -89,7 +90,7 @@ function demoApi() {
     s.roles = withIds([
       { nom: 'Administrateur', est_admin: true, permissions: [], ordre: 1 },
       { nom: 'Command Staff', est_admin: false, permissions: PERMISSIONS.map((p) => p.key), ordre: 2 },
-      { nom: 'Superviseur', est_admin: false, permissions: ['voir_effectif', 'voir_suivi', 'voir_sanctions', 'ecrire_appreciations', 'ecrire_formations', 'ecrire_sanctions'], ordre: 3 },
+      { nom: 'Superviseur', est_admin: false, permissions: ['voir_effectif', 'voir_suivi', 'voir_sanctions', 'ecrire_appreciations', 'ecrire_formations', 'ecrire_sanctions', 'ecrire_first_lincoln'], ordre: 3 },
       { nom: 'Formateur', est_admin: false, permissions: ['voir_effectif', 'voir_suivi', 'ecrire_appreciations', 'ecrire_formations'], ordre: 4 },
       { nom: 'Agent', est_admin: false, permissions: ['voir_effectif'], ordre: 5 },
     ]);
@@ -107,6 +108,14 @@ function demoApi() {
       { date: '2026-10-29', agent_id: 7, referent: 'Will Karter', critere: 'Communication radio', points: 3, justification: 'Annonces radio claires pendant la poursuite.' },
       { date: '2026-10-31', agent_id: 7, referent: 'Aaron Smith', critere: 'Respect des procédures', points: 4, justification: 'Arrestation conforme, Miranda lu au menottage.' },
       { date: '2026-11-01', agent_id: 8, referent: 'Will Karter', critere: 'Présence et ponctualité', points: -2, justification: 'Absent au briefing sans prévenir.' },
+    ]);
+    s.first_lincoln = withIds([
+      { date: '2026-11-03', agent_id: 7, evaluateur: 'Aaron Smith', evaluateur_matricule: '12',
+        n_conduite: 15, n_comportement: 16, n_lois: 13, n_citoyens: 17, n_interventions: 12, n_rapports: 9, n_procedures: 11,
+        c_conduite: 'Code 3 bien géré.', c_comportement: '', c_lois: '', c_citoyens: 'Courtois avec les civils.', c_interventions: 'Hésitant sur le contrôle à haut risque.',
+        c_rapports: 'Rapport incomplet : heure des droits absente.', c_procedures: 'Miranda lu trop tard.',
+        points_forts: 'Calme, bonne communication radio.', points_ameliorer: 'Rédaction des rapports et ordre de la procédure au poste.',
+        decision: 'À repasser', motif: 'Deux erreurs de procédure à corriger avant la sortie d\'académie.', signature_evaluateur: 'Aaron Smith', signature_candidat: 'Marty Raydmon' },
     ]);
     s.sanctions = withIds([
       { date: '2026-11-01', agent_id: 8, type: 'Avertissement oral', motif: 'Absence non justifiée au briefing', emise_par: 'Will Karter', fin: '2026-11-15', levee: false },
@@ -147,7 +156,7 @@ function demoApi() {
     async remove(table, id) {
       const s = load();
       s[table] = (s[table] || []).filter((x) => x.id !== id);
-      if (table === 'agents') for (const t of ['carriere', 'formations', 'appreciations', 'sanctions']) s[t] = s[t].filter((x) => x.agent_id !== id);
+      if (table === 'agents') for (const t of ['carriere', 'formations', 'appreciations', 'sanctions', 'first_lincoln']) s[t] = (s[t] || []).filter((x) => x.agent_id !== id);
       save(s);
     },
     reset() { store.set(KEY, null); mem = null; try { localStorage.removeItem(KEY); } catch (e) {} },
