@@ -8,14 +8,20 @@ const root = document.getElementById('app');
 const S = {
   uid: null, session: null, me: null, role: null, perms: new Set(),
   roles: [], profiles: [], agents: [], grades: [], formations_cat: [], sanction_types: [], listes: [],
-  carriere: [], formations: [], appreciations: [], sanctions: [],
+  carriere: [], formations: [], appreciations: [], sanctions: [], first_lincoln: [],
   ui: { effectif: { q: '', jur: '', statut: '', libres: true }, journal: {}, histo: 'tout', paramTab: 'grades', adminTab: 'comptes' },
 };
-const TABLES = ['grades', 'formations_cat', 'sanction_types', 'listes', 'agents', 'carriere', 'formations', 'appreciations', 'sanctions'];
+const TABLES = ['grades', 'formations_cat', 'sanction_types', 'listes', 'agents', 'carriere', 'formations', 'appreciations', 'sanctions', 'first_lincoln'];
 const STATUTS = ['Actif', 'Congé (LOA)', 'Suspendu', 'Démission', 'Renvoyé'];
 const EVENTS = ["Entrée à l'académie", "Sortie d'académie", 'Promotion', 'Rétrogradation', 'Mutation de division', 'Changement de référent', 'Congé', 'Retour de congé', 'Départ'];
 const GRADE_EVENTS = EVENTS.slice(0, 4);
 const RESULTATS = ['Validée', 'Échouée', 'En cours'];
+const FL_CRITERES = [['conduite', 'Conduite'], ['comportement', 'Comportement'], ['lois', 'Respect des lois'], ['citoyens', 'Respect des citoyens'], ['interventions', 'Qualité des interventions'], ['rapports', 'Qualité des rapports'], ['procedures', 'Respect des procédures']];
+const FL_MAX = FL_CRITERES.length * 20;
+const FL_DECISIONS = [['Validé', 'First Lincoln validé', 'good'], ['Refusé', 'First Lincoln refusé', 'bad'], ['À repasser', 'First Lincoln à repasser', 'warn']];
+const flTotal = (x) => FL_CRITERES.reduce((t, [k]) => t + Number(x[`n_${k}`] || 0), 0);
+const fmtNote = (n) => String(Math.round(Number(n || 0) * 10) / 10).replace('.', ',');
+const flChip = (d) => { const f = FL_DECISIONS.find(([k]) => k === d); return `<span class="chip ${f ? f[2] : 'plain'}">${esc(f ? f[1] : d || '—')}</span>`; };
 const GROUP_COLORS = { 'command staff': 'var(--g-command)', 'supervisory staff': 'var(--g-super)', detectives: 'var(--g-det)', application: 'var(--g-app)', academy: 'var(--g-acad)' };
 
 /* ================================================================== outils */
@@ -60,6 +66,7 @@ const ICONS = {
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   up: '<path d="M12 19V5M5 12l7-7 7 7"/>',
+  flag: '<path d="M5 21V4"/><path d="M5 4h12l-2.5 4.5L17 13H5"/>',
 };
 const icon = (name, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
 const BADGE = '<svg width="42" height="42" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="#1b3350" stroke="#3b5f88"/><path d="M20 8.5l9 3.6v7.2c0 6-4 9.6-9 11.7-5-2.1-9-5.7-9-11.7v-7.2z" fill="none" stroke="#d9b45a" stroke-width="1.6"/><path d="M20 14.8l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#d9b45a"/></svg>';
@@ -81,6 +88,7 @@ function metrics(a) {
   const fo = S.formations.filter((x) => x.agent_id === id);
   const ap = S.appreciations.filter((x) => x.agent_id === id);
   const sa = S.sanctions.filter((x) => x.agent_id === id);
+  const fl = S.first_lincoln.filter((x) => x.agent_id === id).sort(byDateDesc);
   const gradeDate = car.filter((x) => GRADE_EVENTS.includes(x.type)).map((x) => x.date).sort().pop() || a.entree_academie || null;
   const jours = gradeDate ? Math.max(0, daysBetween(gradeDate, t)) : null;
   const grade = gradeOf(a.grade);
@@ -92,7 +100,10 @@ function metrics(a) {
   const done = new Set(fo.filter((x) => x.resultat === 'Validée').map((x) => norm(x.formation)));
   const reqDone = req.filter((f) => done.has(norm(f.nom))).length;
   const actives = sa.filter((x) => sanctionStatus(x) === 'Active');
-  const last = [...car, ...fo, ...ap, ...sa].map((x) => x.date).sort().pop() || null;
+  const last = [...car, ...fo, ...ap, ...sa, ...fl].map((x) => x.date).sort().pop() || null;
+  // Le First Lincoln validé est exigé pour quitter le premier grade (sortie d'académie).
+  const needFL = !!(grade && suivant && grade.ordre === Math.min(...S.grades.map((g) => g.ordre)));
+  const flOk = fl.some((x) => x.decision === 'Validé');
 
   let elig;
   if (!grade) elig = { state: 'none', label: 'Grade absent de la grille', reasons: [] };
@@ -103,10 +114,11 @@ function metrics(a) {
     if (jours === null || jours < grade.jours_min) reasons.push(`ancienneté ${jours ?? 0}/${grade.jours_min} j`);
     if (ptsDepuis < grade.points_min) reasons.push(`points ${ptsDepuis}/${grade.points_min}`);
     if (reqDone < req.length) reasons.push(`formations ${reqDone}/${req.length}`);
+    if (needFL && !flOk) reasons.push('First Lincoln non validé');
     if (actives.length) reasons.push(actives.length > 1 ? `${actives.length} sanctions actives` : 'sanction active');
     elig = reasons.length ? { state: 'no', label: `Pas encore éligible à ${suivant}`, reasons } : { state: 'yes', label: `Éligible à ${suivant}`, reasons };
   }
-  return { gradeDate, jours, grade, suivant, ptsDepuis, pts30, req, reqDone, done, actives, last, elig };
+  return { gradeDate, jours, grade, suivant, ptsDepuis, pts30, req, reqDone, done, actives, last, elig, fl, needFL, flOk };
 }
 
 function eligChip(m) {
@@ -165,8 +177,8 @@ const NAV = [
 function currentRoute() {
   const h = location.hash.replace(/^#\/?/, '');
   if (/access_token|error_description/.test(h)) return { page: defaultPage() };
-  const [page, arg] = h.split('/');
-  return { page: page || defaultPage(), arg };
+  const [page, arg, sub] = h.split('/');
+  return { page: page || defaultPage(), arg, sub };
 }
 function defaultPage() {
   if (can('voir_effectif') || can('voir_suivi')) return 'tableau';
@@ -176,7 +188,7 @@ function defaultPage() {
 const PAGES = {
   tableau: { allowed: () => can('voir_effectif') || can('voir_suivi'), render: pageDashboard },
   effectif: { allowed: () => can('voir_effectif'), render: pageEffectif },
-  agent: { allowed: () => true, render: pageAgent },
+  agent: { allowed: () => true, render: (arg, sub) => (sub === 'first-lincoln' ? pageFirstLincoln(arg) : pageAgent(arg)) },
   'mon-dossier': { allowed: () => !!myAgent(), render: () => pageAgent(S.me.agent_id) },
   carriere: { allowed: () => can('voir_suivi'), render: () => pageJournal('carriere') },
   formations: { allowed: () => can('voir_suivi'), render: () => pageJournal('formations') },
@@ -193,13 +205,13 @@ function render() {
   if (!S.me) return renderGate('Profil introuvable', "Votre compte n'a pas de profil. Vérifiez que le fichier schema.sql a bien été exécuté dans Supabase, puis reconnectez-vous.");
   if (S.me.statut === 'en_attente') return renderGate('Compte en attente de validation', `Bonjour ${esc(S.me.pseudo || '')}. Un membre du Command Staff doit valider votre compte et vous attribuer un rôle. Revenez un peu plus tard.`, true);
   if (S.me.statut === 'desactive') return renderGate('Compte désactivé', "Votre accès a été retiré. Contactez le Command Staff si vous pensez qu'il s'agit d'une erreur.");
-  const { page, arg } = currentRoute();
+  const { page, arg, sub } = currentRoute();
   const def = PAGES[page];
   root.innerHTML = `${demoBar()}<div class="shell">${sidebar(page === 'agent' && Number(arg) === S.me.agent_id ? 'mon-dossier' : page)}<main id="main" tabindex="-1"></main></div>`;
   const main = document.getElementById('main');
   if (!def) { main.innerHTML = head('Page introuvable', "Cette adresse ne correspond à aucune page.") ; return; }
   if (!def.allowed()) { main.innerHTML = head('Accès refusé', "Votre rôle ne donne pas accès à cette page. Demandez au Command Staff si vous en avez besoin."); return; }
-  def.render(arg);
+  def.render(arg, sub);
 }
 
 function demoBar() {
@@ -357,6 +369,7 @@ function pageAgent(arg) {
   const btn = (act, label, ic, cls = '') => `<button type="button" class="btn sm ${cls}" data-act="${act}" data-agent="${a.id}">${icon(ic, 15)} ${label}</button>`;
   const actions = [
     can('gerer_carriere') && m.suivant ? btn('promote', `Promouvoir ${esc(m.suivant)}`, 'up', 'primary') : '',
+    `<a class="btn sm" href="#/agent/${a.id}/first-lincoln">${icon('flag', 15)} First Lincoln${m.fl.length ? ` <span class="chip plain">${m.fl.length}</span>` : ''}</a>`,
     can('gerer_carriere') ? btn('new-carriere', 'Événement', 'trend') : '',
     can('ecrire_formations') ? btn('new-formations', 'Formation', 'cap') : '',
     can('ecrire_appreciations') ? btn('new-appreciations', 'Appréciation', 'star') : '',
@@ -389,13 +402,13 @@ function pageAgent(arg) {
     <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,2fr);margin-top:18px" id="agentGrid">
       <div class="grid" style="align-content:start">
         <div class="card"><h2>${m.suivant ? `Formations pour devenir ${esc(m.suivant)}` : 'Formations du grade suivant'}</h2>
-          <div class="checklist">${m.req.map((f) => `<div><span>${esc(f.nom)}</span>${m.done.has(norm(f.nom)) ? '<span class="chip good">Validée</span>' : '<span class="chip warn">À faire</span>'}</div>`).join('') || '<p class="empty">Aucune formation requise.</p>'}</div></div>
+          <div class="checklist">${m.req.map((f) => `<div><span>${esc(f.nom)}</span>${m.done.has(norm(f.nom)) ? '<span class="chip good">Validée</span>' : '<span class="chip warn">À faire</span>'}</div>`).join('')}${m.needFL ? `<div><a href="#/agent/${a.id}/first-lincoln">First Lincoln</a>${m.flOk ? '<span class="chip good">Validé</span>' : m.fl.length ? flChip(m.fl[0].decision) : '<span class="chip warn">À passer</span>'}</div>` : ''}${m.req.length || m.needFL ? '' : '<p class="empty">Aucune formation requise.</p>'}</div></div>
         <div class="card"><h2>Formations validées<span class="hint">${m.done.size}</span></h2>
           <div style="display:flex;flex-wrap:wrap;gap:6px">${[...new Set(S.formations.filter((x) => x.agent_id === a.id && x.resultat === 'Validée').map((x) => x.formation))].map((n) => `<span class="chip plain">${esc(n)}</span>`).join('') || '<p class="empty">Aucune pour le moment.</p>'}</div></div>
         ${a.notes ? `<div class="card"><h2>Notes</h2><p style="margin:0;white-space:pre-wrap">${esc(a.notes)}</p></div>` : ''}
       </div>
       <div class="card"><h2>Historique</h2>
-        <div class="tabs" role="tablist" aria-label="Filtrer l'historique">${[['tout', 'Tout'], ['carriere', 'Carrière'], ['formations', 'Formations'], ['appreciations', 'Appréciations'], ['sanctions', 'Sanctions']].map(([k, l]) => `<button type="button" role="tab" data-histo="${k}" aria-selected="${S.ui.histo === k}">${l}</button>`).join('')}</div>
+        <div class="tabs" role="tablist" aria-label="Filtrer l'historique">${[['tout', 'Tout'], ['carriere', 'Carrière'], ['formations', 'Formations'], ['first_lincoln', 'First Lincoln'], ['appreciations', 'Appréciations'], ['sanctions', 'Sanctions']].map(([k, l]) => `<button type="button" role="tab" data-histo="${k}" aria-selected="${S.ui.histo === k}">${l}</button>`).join('')}</div>
         <div class="timeline" id="timeline"></div></div>
     </div>`;
   if (window.matchMedia('(max-width: 960px)').matches) $('#agentGrid').style.gridTemplateColumns = '1fr';
@@ -407,10 +420,11 @@ function drawTimeline(a) {
   const take = (t) => k === 'tout' || k === t;
   if (take('carriere')) S.carriere.filter((x) => x.agent_id === a.id).forEach((x) => ev.push({ t: 'carriere', x, title: `${esc(x.type)}${x.avant || x.apres ? ` <span class="muted">· ${esc(x.avant || '—')} → ${esc(x.apres || '—')}</span>` : ''}`, text: x.commentaire, by: x.decide_par && `Décidé par ${x.decide_par}` }));
   if (take('formations')) S.formations.filter((x) => x.agent_id === a.id).forEach((x) => ev.push({ t: 'formations', x, title: `${esc(x.formation)} <span class="chip ${x.resultat === 'Validée' ? 'good' : x.resultat === 'Échouée' ? 'bad' : 'warn'}">${esc(x.resultat)}</span>${x.note != null ? ` <span class="muted">${x.note}/20</span>` : ''}`, text: x.commentaire, by: x.formateur && `Formateur : ${x.formateur}` }));
+  if (take('first_lincoln')) S.first_lincoln.filter((x) => x.agent_id === a.id).forEach((x) => ev.push({ t: 'first_lincoln', x, title: `First Lincoln ${flChip(x.decision)} <span class="muted">${fmtNote(flTotal(x))}/${FL_MAX}</span>`, text: x.motif, by: x.evaluateur && `Évaluateur : ${x.evaluateur}` }));
   if (take('appreciations')) S.appreciations.filter((x) => x.agent_id === a.id).forEach((x) => ev.push({ t: 'appreciations', x, title: `${esc(x.critere || 'Appréciation')} ${pointsChip(Number(x.points))}`, text: x.justification, by: x.referent && `Référent : ${x.referent}` }));
   if (take('sanctions')) S.sanctions.filter((x) => x.agent_id === a.id).forEach((x) => ev.push({ t: 'sanctions', x, title: `${esc(x.type)} ${sanctionChip(x)}`, text: x.motif, by: [x.emise_par && `Émise par ${x.emise_par}`, x.fin ? `fin le ${fmtD(x.fin)}` : 'permanente'].filter(Boolean).join(' · ') }));
   ev.sort((p, q) => byDateDesc(p.x, q.x));
-  const perm = { carriere: 'gerer_carriere', formations: 'ecrire_formations', appreciations: 'ecrire_appreciations', sanctions: 'ecrire_sanctions' };
+  const perm = { carriere: 'gerer_carriere', formations: 'ecrire_formations', appreciations: 'ecrire_appreciations', sanctions: 'ecrire_sanctions', first_lincoln: 'ecrire_first_lincoln' };
   $('#timeline').innerHTML = ev.map((e) => `<div class="tl ${e.t}"><span class="date">${fmtD(e.x.date)}</span><span class="dot"></span>
     <div class="what"><b>${e.title}</b>${e.text ? `<p>${esc(e.text)}</p>` : ''}${e.by ? `<p>${typeof e.by === 'string' ? esc(e.by) : ''}</p>` : ''}</div>
     <div class="tl-actions">${can(perm[e.t]) ? `<button type="button" class="icon-btn" data-act="edit-${e.t}" data-id="${e.x.id}" aria-label="Modifier">${icon('edit', 16)}</button>` : ''}</div></div>`).join('') || '<p class="empty">Rien à afficher pour le moment.</p>';
@@ -611,10 +625,98 @@ function openAgentForm(a) {
     onDelete: isNew ? null : async () => {
       await api.remove('agents', a.id);
       S.agents = S.agents.filter((x) => x.id !== a.id);
-      for (const t of ['carriere', 'formations', 'appreciations', 'sanctions']) S[t] = S[t].filter((x) => x.agent_id !== a.id);
+      for (const t of ['carriere', 'formations', 'appreciations', 'sanctions', 'first_lincoln']) S[t] = S[t].filter((x) => x.agent_id !== a.id);
       toast(`${a.nom} a été retiré de l'effectif.`); location.hash = '#/effectif';
     },
     deleteText: isNew ? '' : `Supprimer ${a.nom} et tout son historique ? Pour un départ, préférez l'événement « Départ » qui garde l'historique.`,
+  });
+}
+
+/* ================================================================== First Lincoln */
+function pageFirstLincoln(arg) {
+  const a = agentById(Number(arg));
+  if (!a) { M().innerHTML = head('Agent introuvable', "Cet agent n'existe pas ou vous n'avez pas accès à sa fiche."); return; }
+  const own = a.id === S.me.agent_id;
+  if (!own && !can('voir_suivi')) { M().innerHTML = head('Accès refusé', "Votre rôle ne permet pas de consulter les fiches des autres agents."); return; }
+  const m = metrics(a);
+  const list = m.fl;
+  const last = list[0];
+  const canWrite = can('ecrire_first_lincoln');
+  const crumbs = own ? '<a href="#/mon-dossier">Mon dossier</a> / First Lincoln' : `<a href="#/effectif">Effectif</a> / <a href="#/agent/${a.id}">${esc(a.nom)}</a> / First Lincoln`;
+  const card = (x, i) => {
+    const total = flTotal(x);
+    const rows = FL_CRITERES.map(([k, l]) => { const n = Number(x[`n_${k}`] || 0); return `<tr><td>${l}</td><td class="num"><b>${fmtNote(n)}</b><span class="muted">/20</span></td><td><div class="meter fl-meter"><i class="${n >= 10 ? 'full' : 'low'}" style="width:${(n / 20) * 100}%"></i></div></td><td>${esc(x[`c_${k}`] || '')}</td></tr>`; }).join('');
+    return `<details class="card fl-card" ${i === 0 ? 'open' : ''}>
+      <summary><span class="fl-sum"><b>${fmtD(x.date)}</b><span class="muted">Évaluateur : ${esc(x.evaluateur || '—')}${x.evaluateur_matricule ? ` (${esc(x.evaluateur_matricule)})` : ''}</span></span>
+        <span class="fl-score tabular">${fmtNote(total)}<small>/${FL_MAX}</small></span>${flChip(x.decision)}
+        ${canWrite ? `<button type="button" class="icon-btn" data-act="edit-first_lincoln" data-id="${x.id}" aria-label="Modifier cette évaluation">${icon('edit', 16)}</button>` : ''}</summary>
+      <div class="table-wrap" style="margin-top:14px"><table><thead><tr><th>Critère</th><th class="num">Note</th><th style="width:22%"><span class="sr-only">Barre</span></th><th>Commentaire</th></tr></thead>
+        <tbody>${rows}<tr class="fl-total-row"><td><b>Total</b></td><td class="num"><b>${fmtNote(total)}</b><span class="muted">/${FL_MAX}</span></td><td colspan="2"></td></tr></tbody></table></div>
+      <div class="grid two" style="margin-top:14px">
+        <div class="fl-box"><small>Points forts</small><p>${esc(x.points_forts || '—')}</p></div>
+        <div class="fl-box"><small>Points à améliorer</small><p>${esc(x.points_ameliorer || '—')}</p></div>
+      </div>
+      <div class="fl-box fl-decision ${(FL_DECISIONS.find(([k]) => k === x.decision) || [])[2] || ''}" style="margin-top:12px"><small>Décision finale</small><p><b>${esc((FL_DECISIONS.find(([k]) => k === x.decision) || [, x.decision])[1])}</b>${x.motif ? ` · ${esc(x.motif)}` : ''}</p></div>
+      <p class="muted" style="margin:12px 0 0;font-size:12.5px">Signature de l'évaluateur : <b style="color:var(--text)">${esc(x.signature_evaluateur || '—')}</b> · Signature du candidat : <b style="color:var(--text)">${esc(x.signature_candidat || '—')}</b></p>
+    </details>`;
+  };
+  M().innerHTML = head(`First Lincoln — ${esc(a.nom)}`, crumbs,
+    `<a class="btn ghost" href="#/${own ? 'mon-dossier' : `agent/${a.id}`}">Retour à la fiche</a>${canWrite ? `<button type="button" class="btn primary" data-act="fl-new" data-agent="${a.id}">${icon('plus', 16)} Nouvelle évaluation</button>` : ''}`) +
+    `<div class="kpis fl-kpis">
+      <div class="kpi"><small>Candidat</small><b style="font-size:20px">${esc(a.nom)}</b><span>Matricule ${esc(a.matricule)} · ${esc(a.grade || '—')}</span></div>
+      <div class="kpi ${m.flOk ? 'ok' : ''}"><small>Statut</small><b style="font-size:20px">${m.flOk ? 'Validé' : last ? esc(last.decision) : 'Jamais passé'}</b><span>${m.needFL ? 'exigé pour la sortie d\'académie' : 'déjà sorti d\'académie'}</span></div>
+      <div class="kpi"><small>Évaluations</small><b>${list.length}</b><span>${last ? `dernière le ${fmtD(last.date)}` : 'aucune pour le moment'}</span></div>
+      <div class="kpi"><small>Dernière note</small><b>${last ? fmtNote(flTotal(last)) : '—'}</b><span>sur ${FL_MAX}</span></div>
+    </div>
+    <div class="fl-list">${list.map(card).join('') || `<div class="card"><p class="empty">Aucune évaluation First Lincoln pour ${esc(a.nom)}.${canWrite ? ' Cliquez sur « Nouvelle évaluation » pour remplir la fiche.' : ''}</p></div>`}</div>`;
+}
+function openFirstLincolnForm(a, row) {
+  if (!a) return;
+  const isNew = !row;
+  const me = myAgent();
+  const values = row ? { ...row } : { date: today(), evaluateur: me?.nom || '', evaluateur_matricule: me?.matricule || '', signature_evaluateur: me?.nom || '' };
+  const fields = [
+    { type: 'html', html: `<div class="fl-cand"><span>Candidat <b>${esc(a.nom)}</b></span><span>Matricule <b>${esc(a.matricule)}</b></span><span>Grade <b>${esc(a.grade || '—')}</b></span></div>` },
+    { name: 'date', label: "Date de l'évaluation", type: 'date', required: true },
+    { name: 'evaluateur', label: 'Évaluateur', type: 'text', list: agentNames(), required: true },
+    { name: 'evaluateur_matricule', label: "Matricule de l'évaluateur", type: 'text' },
+    { type: 'section', label: "Critères d'évaluation" },
+  ];
+  for (const [k, l] of FL_CRITERES) fields.push(
+    { name: `n_${k}`, label: `${l} · note /20`, type: 'number', min: 0, max: 20, step: 0.5, required: true },
+    { name: `c_${k}`, label: `${l} · commentaire`, type: 'text' });
+  fields.push(
+    { type: 'html', html: `<div class="fl-live" id="flLive">Total : <b>0</b> / ${FL_MAX}</div>` },
+    { type: 'section', label: "Observations de l'évaluateur" },
+    { name: 'points_forts', label: 'Points forts', type: 'textarea' },
+    { name: 'points_ameliorer', label: 'Points à améliorer', type: 'textarea' },
+    { type: 'section', label: 'Décision finale' },
+    { name: 'decision', label: 'Décision', type: 'select', options: FL_DECISIONS.map(([k, l]) => [k, l]), required: true, full: true },
+    { name: 'motif', label: 'Motif de la décision', type: 'textarea', required: true },
+    { name: 'signature_evaluateur', label: "Signature de l'évaluateur", type: 'text', help: 'Nom de l\'évaluateur.' },
+    { name: 'signature_candidat', label: 'Signature du candidat', type: 'text', help: 'Nom du candidat, s\'il a pris connaissance de la fiche.' });
+  openForm({
+    title: isNew ? `Fiche d'évaluation First Lincoln — ${a.nom}` : `Modifier le First Lincoln du ${fmtD(row.date)}`,
+    wide: true, fields, values,
+    submitLabel: isNew ? 'Enregistrer la fiche' : 'Enregistrer les modifications',
+    onInput(name, v, set, get) {
+      const t = FL_CRITERES.reduce((s, [k]) => s + (Number(get(`n_${k}`)) || 0), 0);
+      const el = document.getElementById('flLive');
+      if (el) el.innerHTML = `Total : <b>${fmtNote(t)}</b> / ${FL_MAX}`;
+    },
+    async onSubmit(v) {
+      v.agent_id = a.id;
+      const saved = isNew ? await api.insert('first_lincoln', v) : await api.update('first_lincoln', row.id, v);
+      if (isNew) S.first_lincoln.push(saved); else Object.assign(S.first_lincoln.find((x) => x.id === row.id), saved);
+      toast(v.decision === 'Validé' && metrics(a).needFL ? 'Fiche enregistrée : le First Lincoln compte maintenant pour la sortie d\'académie.' : 'Fiche First Lincoln enregistrée.');
+      render();
+    },
+    onDelete: isNew ? null : async () => {
+      await api.remove('first_lincoln', row.id);
+      S.first_lincoln = S.first_lincoln.filter((x) => x.id !== row.id);
+      toast('Évaluation supprimée.'); render();
+    },
+    deleteText: 'Supprimer définitivement cette fiche First Lincoln ?',
   });
 }
 
@@ -728,6 +830,8 @@ function openForm(ctx) {
   formCtx = ctx;
   const v = ctx.values || {};
   const field = (f) => {
+    if (f.type === 'section') return `<h3 class="form-sec">${f.label}</h3>`;
+    if (f.type === 'html') return `<div class="f full">${f.html}</div>`;
     const id = `ff-${f.name}`, val = v[f.name] ?? '';
     const req = f.required ? 'required' : '';
     let input;
@@ -740,7 +844,7 @@ function openForm(ctx) {
     return `<div class="f ${f.full || f.type === 'textarea' ? 'full' : ''}"><label for="${id}">${f.label}${f.required ? ' <span aria-hidden="true">*</span>' : ''}</label>${input}${f.help ? `<p class="help">${f.help}</p>` : ''}</div>`;
   };
   const m = document.getElementById('modal');
-  m.innerHTML = `<form class="card" id="mform" novalidate><h2 id="mtitle">${esc(ctx.title)}</h2><div class="fields">${ctx.fields.map(field).join('')}</div>
+  m.innerHTML = `<form class="card${ctx.wide ? ' wide' : ''}" id="mform" novalidate><h2 id="mtitle">${esc(ctx.title)}</h2><div class="fields">${ctx.fields.map(field).join('')}</div>
     <p class="help" id="merr" role="alert" style="color:var(--bad);margin-top:12px" hidden></p>
     <div class="foot">${ctx.onDelete ? '<button type="button" class="btn danger left" id="mdel">Supprimer</button>' : ''}<button type="button" class="btn ghost" id="mcancel">Annuler</button><button type="submit" class="btn primary" id="msave">${esc(ctx.submitLabel || 'Enregistrer')}</button></div></form>`;
   m.hidden = false;
@@ -765,6 +869,7 @@ function openForm(ctx) {
     }
     const out = {};
     for (const f of ctx.fields) {
+      if (f.type === 'section' || f.type === 'html') continue;
       let val = get(f.name);
       if (f.type === 'checkbox') { out[f.name] = !!val; continue; }
       if (typeof val === 'string') val = val.trim();
@@ -814,6 +919,8 @@ document.addEventListener('click', async (e) => {
   if (act === 'agent-new') return openAgentForm(null);
   if (act === 'agent-edit') return openAgentForm(agentById(agentId));
   if (act === 'promote') { const a = agentById(agentId); const g = gradeOf(a.grade); return openJournalForm('carriere', null, { agent_id: a.id, type: 'Promotion', avant: a.grade, apres: g?.suivant || '' }); }
+  if (act === 'fl-new') return openFirstLincolnForm(agentById(agentId), null);
+  if (act === 'edit-first_lincoln') { const r = S.first_lincoln.find((x) => x.id === id); return openFirstLincolnForm(agentById(r.agent_id), r); }
   if (act?.startsWith('new-')) return openJournalForm(act.slice(4), null, agentId ? { agent_id: agentId } : {});
   if (act?.startsWith('edit-')) { const tb = act.slice(5); return openJournalForm(tb, S[tb].find((x) => x.id === id)); }
   if (act === 'lift') { const s = S.sanctions.find((x) => x.id === id); try { Object.assign(s, await attempt(() => api.update('sanctions', id, { levee: true }), 'Sanction levée.')); render(); } catch (ex) {} return; }
