@@ -1,5 +1,5 @@
-/* SASP â€” terminal de suivi. ThÃ¨me unique calquÃ© sur le MDT : anthracite, cartes grises, accent bleu, badges jaunes.
-   Mise en page : barre latÃ©rale fixe + contenu ; les tableaux dÃ©filent dans leur propre conteneur. */
+/* SASP — terminal de suivi. Thème unique calqué sur le MDT : anthracite, cartes grises, accent bleu, badges jaunes.
+   Mise en page : barre latérale fixe + contenu ; les tableaux défilent dans leur propre conteneur. */
 :root {
   --bg: #121315;
   --app: #18191c;
@@ -68,7 +68,7 @@ main { padding: 28px 32px 56px; min-width: 0; }
 .demo-bar { background: var(--accent-soft); color: #bcd9ff; font-size: 13px; padding: 9px 16px; display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
 .demo-bar select { background: #10243b; border: 1px solid #2c4d73; border-radius: 6px; padding: 3px 6px; }
 
-/* ---------- Ã©lÃ©ments ---------- */
+/* ---------- éléments ---------- */
 .btn { border: 0; border-radius: 8px; padding: 9px 15px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; background: var(--field); white-space: nowrap; }
 .btn:hover { filter: brightness(1.13); }
 .btn.primary { background: var(--accent); color: #fff; }
@@ -182,7 +182,7 @@ td .sub { display: block; color: var(--muted); font-size: 12px; }
 .tl .what p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
 .tl.carriere { --tc: var(--accent); } .tl.formations { --tc: var(--g-det); } .tl.appreciations { --tc: var(--good); } .tl.sanctions { --tc: var(--bad); }
 
-/* ---------- comptes et rÃ´les ---------- */
+/* ---------- comptes et rôles ---------- */
 .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
 .role-card .perm-list { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
 .role-card .head { display: flex; gap: 10px; align-items: center; }
@@ -195,7 +195,7 @@ td .sub { display: block; color: var(--muted); font-size: 12px; }
 .login p { margin: 0; color: var(--muted); }
 .login .fine { font-size: 12px; color: var(--faint); }
 
-/* ---------- fenÃªtres et notifications ---------- */
+/* ---------- fenêtres et notifications ---------- */
 .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, .62); display: grid; place-items: center; padding: 16px; z-index: 50; }
 .modal .card { width: min(620px, 100%); max-height: 92vh; overflow: auto; padding: 24px; }
 .modal h2 { margin: 0 0 18px; font-size: 17px; }
@@ -207,7 +207,7 @@ td .sub { display: block; color: var(--muted); font-size: 12px; }
 .frame { width: 100%; height: calc(100vh - 170px); min-height: 640px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--app); }
 .loading { display: grid; place-items: center; min-height: 100%; color: var(--muted); }
 
-/* ---------- petits Ã©crans ---------- */
+/* ---------- petits écrans ---------- */
 @media (max-width: 1280px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } .grid.three { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 960px) {
   .shell { grid-template-columns: 1fr; }
@@ -228,3 +228,28 @@ td .sub { display: block; color: var(--muted); font-size: 12px; }
   .occ { grid-template-columns: 110px minmax(0, 1fr) 54px; }
   .filters .in, .filters .in.search { min-width: 0; width: 100%; max-width: none; }
 }
+
+/* ---------- First Lincoln ---------- */
+.modal .card.wide { width: min(860px, 100%); }
+.fields .form-sec { grid-column: 1 / -1; margin: 10px 0 -4px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); }
+.fl-cand { display: flex; flex-wrap: wrap; gap: 6px 22px; background: var(--field); border-radius: 10px; padding: 10px 14px; color: var(--muted); font-size: 13px; }
+.fl-cand b { color: var(--text); }
+.fl-live { background: var(--accent-soft); color: #cfe4ff; border-radius: 10px; padding: 10px 14px; font-size: 15px; text-align: right; font-variant-numeric: tabular-nums; }
+.fl-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.fl-list { display: flex; flex-direction: column; gap: 14px; }
+.fl-card > summary { list-style: none; display: flex; align-items: center; gap: 14px; cursor: pointer; flex-wrap: wrap; }
+.fl-card > summary::-webkit-details-marker { display: none; }
+.fl-card > summary::before { content: "▸"; color: var(--muted); transition: transform .15s; }
+.fl-card[open] > summary::before { transform: rotate(90deg); }
+.fl-sum { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
+.fl-score { font-size: 22px; font-weight: 700; }
+.fl-score small { font-size: 13px; color: var(--muted); font-weight: 500; }
+.fl-meter { margin-top: 0; }
+.fl-meter i.low { background: var(--warn); }
+.fl-total-row td { background: #1c1d21; }
+.fl-box { background: var(--field); border-radius: 10px; padding: 12px 14px; }
+.fl-box small { color: var(--muted); font-size: 12px; display: block; }
+.fl-box p { margin: 4px 0 0; white-space: pre-wrap; }
+.fl-decision.good { background: var(--good-bg); } .fl-decision.bad { background: var(--bad-bg); } .fl-decision.warn { background: var(--warn-bg); }
+@media (max-width: 1280px) { .fl-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tl.first_lincoln { --tc: var(--warn); }
