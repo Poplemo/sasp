@@ -100,7 +100,7 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
 
 /* lignes de charges */
 .charges { display: flex; flex-direction: column; gap: 8px; }
-.charge { display: grid; grid-template-columns: minmax(0, 1fr) 132px 150px 34px; gap: 12px; align-items: center; background: var(--field); border-radius: 10px; padding: 10px 10px 10px 14px; }
+.charge { display: grid; grid-template-columns: minmax(0, 1fr) auto 150px 34px; gap: 12px; align-items: center; background: var(--field); border-radius: 10px; padding: 10px 10px 10px 14px; }
 .charge .name { font-weight: 600; font-size: 13.5px; }
 .charge .scale { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
 .qty { display: flex; align-items: center; gap: 6px; }
@@ -109,7 +109,7 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
 .pen { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 .pen small { display: block; color: var(--muted); font-weight: 400; font-size: 11.5px; }
 .x { border: 0; width: 34px; height: 34px; border-radius: 8px; background: var(--danger-bg); color: var(--danger); display: grid; place-items: center; }
-.totals { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; }
+.totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
 .tot { background: #1d2a3a; border: 1px solid #27405e; border-radius: 10px; padding: 12px 14px; }
 .tot small { color: #9bb3cf; font-size: 12px; }
 .tot b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
@@ -120,7 +120,7 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
 .rule div { background: var(--field); border-radius: 8px; padding: 8px 10px; font-size: 12px; color: var(--muted); }
 .rule b { display: block; color: var(--text); font-size: 12.5px; }
 .weapons { display: flex; flex-direction: column; gap: 8px; }
-.wrow { display: grid; grid-template-columns: 1fr auto 34px; gap: 8px; align-items: center; }
+.wrow { display: grid; grid-template-columns: 1fr 170px 34px; gap: 8px; align-items: center; }
 .check { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 12.5px; white-space: nowrap; }
 .seized { margin-top: 14px; background: #1c2a22; border: 1px solid #2a4434; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
 .seized small { display: block; color: #8fc4a5; font-size: 12px; margin-bottom: 4px; }
@@ -187,6 +187,27 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
   .toolbar .in { width: 100%; }
 }
 
+/* registre */
+.code { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .02em; color: #8fc2ff; background: var(--accent-soft); border-radius: 5px; padding: 1px 6px; margin-right: 7px; font-variant-numeric: tabular-nums; vertical-align: 1px; }
+.chip b { color: #8fc2ff; font-size: 11.5px; }
+.badge.t-c { background: #22303f; color: #9ec7f0; }
+.badge.t-dm { background: var(--badge-bg); color: var(--badge-fg); }
+.badge.t-dmj { background: #40291a; color: #f5a463; }
+.badge.t-cr { background: var(--danger-bg); color: #f18b8b; }
+.qtys { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.nc { font-size: 11.5px; color: var(--muted); background: #1f2024; border: 1px dashed var(--line); border-radius: 7px; padding: 5px 8px; }
+.tot.hl { background: #2a2414; border-color: #5c4a1c; }
+.tot.hl small { color: #e3c779; }
+.tot b { font-size: 19px; }
+.tot small + small, .tot b + small { display: block; margin-top: 2px; }
+.calc div + div { margin-top: 4px; }
+.seized.annex { background: #2a2414; border-color: #4d3f1c; margin-top: 10px; }
+.seized.annex small { color: #e3c779; }
+.check.big { white-space: normal; font-size: 13px; color: var(--text); }
+.regdate { color: var(--muted); font-size: 11.5px; margin: 6px 0 0; }
+.f[hidden] { display: none; }
+@media (max-width: 560px) { .wrow { grid-template-columns: 1fr 34px; } .wrow select { grid-column: 1; } .charge .qtys { grid-column: 1; } }
+
 /* Intégré dans le terminal SASP (rapport.html?embed=1) : pas de barre latérale, onglets en haut. */
 .embed body { background: var(--app); }
 .embed .shell { grid-template-columns: 1fr; max-width: none; }
@@ -207,11 +228,12 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
     <nav class="nav" aria-label="Navigation">
       <span class="nav-label">Rédaction</span>
       <button type="button" data-view="rapport" aria-current="page"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></span>Rapport d'arrestation</button>
-      <button type="button" data-view="infractions"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h3"/></svg></span>Infractions</button>
+      <button type="button" data-view="infractions"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h3"/></svg></span>Registre des infractions</button>
     </nav>
     <div class="side-foot">
       <label for="agentDefault">Mon matricule (mémorisé)</label>
       <input id="agentDefault" class="in" placeholder="ex. 04">
+      <p class="regdate">Registre Life Side du 09/11/2026</p>
     </div>
   </aside>
 
@@ -249,24 +271,29 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
             <div class="fields">
               <div class="f"><label for="prenom">Prénom</label><input id="prenom" class="in" placeholder="ex. Lean"></div>
               <div class="f"><label for="nom">Nom</label><input id="nom" class="in" placeholder="ex. Gram"></div>
+              <div class="f full"><label class="check big"><input type="checkbox" id="mineur"> Moins de 21 ans au moment des faits (amende et prison divisées par 2)</label></div>
             </div>
           </div>
 
           <div class="card">
             <h2><span class="num">3</span>Qualification des faits<span class="hint" id="countHint"></span></h2>
             <div class="picker">
-              <input id="search" class="in" placeholder="Rechercher et ajouter une infraction…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="dropdown">
+              <input id="search" class="in" placeholder="Rechercher par article ou par nom (ex. DM-19, fuite, cocaïne)…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="dropdown">
               <div class="dropdown" id="dropdown" role="listbox" hidden></div>
             </div>
             <div class="chips" id="chips"></div>
           </div>
 
           <div class="card">
-            <h2><span class="num">4</span>Détail des charges et peines<span class="hint">Amende au maximum · prison proportionnelle à la quantité</span></h2>
+            <h2><span class="num">4</span>Détail des charges et peines<span class="hint">Montants du registre · peine annoncée en MDT</span></h2>
             <div class="charges" id="charges"></div>
             <div class="totals">
-              <div class="tot"><small>Amende totale</small><b id="totFine">0$</b></div>
-              <div class="tot"><small>Peine totale</small><b id="totJail">0 mois</b></div>
+              <div class="tot"><small>Amende totale</small><b id="totFine">0 $</b></div>
+              <div class="tot hl"><small>Peine à annoncer (MDT)</small><b id="totMDT">aucune</b></div>
+              <div class="tot"><small>Registre · lieu</small><b id="totReg">0 min</b><small id="totLieu"></small></div>
+            </div>
+            <div class="fields" style="margin-top:14px">
+              <div class="f"><label for="impaye">Amende impayée, non-solvabilité ($)</label><input id="impaye" class="in" type="number" min="0" step="1" placeholder="0"><p class="help">Convertie en prison : 1 000 $ = 10 min, 20h maximum.</p></div>
             </div>
             <div class="calc" id="calc"></div>
           </div>
@@ -280,12 +307,12 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
           </div>
 
           <div class="card">
-            <h2><span class="num">6</span>Saisie</h2>
+            <h2><span class="num">6</span>Saisie et mesures annexes</h2>
             <div class="rule">
-              <div><b>Fausse monnaie</b>totalité</div>
-              <div><b>Argent liquide</b>au-delà de 10 000$</div>
-              <div><b>Drogues</b>totalité</div>
-              <div><b>Armes</b>toutes, sauf blanches</div>
+              <div><b>Stupéfiants</b>totalité</div>
+              <div><b>Argent</b>non traçable : totalité · non justifié : surplus au-delà de 10 000 $</div>
+              <div><b>Armes</b>CAT.2 et CAT.3, avec munitions</div>
+              <div><b>Autres</b>selon l'annexe de l'infraction</div>
             </div>
             <div class="fields">
               <div class="f"><label for="cash">Argent liquide trouvé sur l'individu ($)</label><input id="cash" class="in" type="number" min="0" step="1" placeholder="0"></div>
@@ -297,6 +324,7 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
               </div>
             </div>
             <div class="seized"><small>Saisie calculée automatiquement</small><span id="seizedText">Aucune</span></div>
+            <div class="seized annex"><small>Mesures annexes du registre</small><span id="annexText">Aucune</span></div>
           </div>
         </div>
 
@@ -330,21 +358,21 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
       </div>
     </section>
 
-    <!-- ================= INFRACTIONS ================= -->
+    <!-- ================= REGISTRE ================= -->
     <section class="view" id="view-infractions" hidden>
       <div class="head">
         <div>
-          <h1>Base de données des infractions</h1>
-          <p>Fourchettes d'amende et de peine utilisées pour le calcul. La quantité de référence fixe le seuil à partir duquel la peine maximale s'applique.</p>
+          <h1>Registre des infractions</h1>
+          <p>Registre Life Side mis à jour le 09/11/2026. Peines : 1 min du registre = 1 mois dans le MDT, 1 h = 1 année.</p>
         </div>
         <div class="head-actions toolbar">
-          <input id="isearch" class="in" placeholder="Rechercher des infractions…">
+          <input id="isearch" class="in" placeholder="Rechercher un article ou une infraction…">
           <select id="icat" class="in" style="width:auto">
-            <option value="">Toutes les catégories</option>
-            <option>INFRACTION</option><option>DÉLIT</option><option>CRIME</option><option>FELONY</option>
+            <option value="">Tous les types</option>
+            <option>CONTRAVENTION</option><option>DÉLIT MINEUR</option><option>DÉLIT MAJEUR</option><option>CRIME</option>
           </select>
           <button type="button" class="btn primary" id="newInf">+ Créer une infraction</button>
-          <button type="button" class="btn ghost" id="restoreCat">Restaurer la liste d'origine</button>
+          <button type="button" class="btn ghost" id="restoreCat">Restaurer le registre officiel</button>
         </div>
       </div>
       <div class="cards" id="cards"></div>
@@ -357,13 +385,16 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
   <form class="card" id="mForm">
     <h2 id="mTitle">Modifier l'infraction</h2>
     <div class="fields">
-      <div class="f full"><label for="mName">Nom</label><input id="mName" class="in" required></div>
-      <div class="f"><label for="mCat">Catégorie</label><select id="mCat" class="in"><option>INFRACTION</option><option>DÉLIT</option><option>CRIME</option><option>FELONY</option></select></div>
-      <div class="f"><label for="mFine">Amende maximale ($)</label><input id="mFine" class="in" type="number" min="0" required></div>
-      <div class="f"><label for="mPmin">Peine minimale (mois)</label><input id="mPmin" class="in" type="number" min="0" required></div>
-      <div class="f"><label for="mPmax">Peine maximale (mois)</label><input id="mPmax" class="in" type="number" min="0" required></div>
-      <div class="f"><label for="mUnit">Unité de quantité</label><input id="mUnit" class="in" placeholder="vide = pas de quantité"><p class="help">ex. pochon, plant, arme, $</p></div>
-      <div class="f"><label for="mRef">Quantité de référence</label><input id="mRef" class="in" type="number" min="1" required><p class="help">Quantité qui donne la peine maximale. 1 = peine maximale dès la première unité.</p></div>
+      <div class="f"><label for="mCode">Article</label><input id="mCode" class="in" placeholder="ex. DM-19" required></div>
+      <div class="f"><label for="mCat">Type</label><select id="mCat" class="in"><option>CONTRAVENTION</option><option>DÉLIT MINEUR</option><option>DÉLIT MAJEUR</option><option>CRIME</option></select></div>
+      <div class="f full"><label for="mName">Infraction</label><input id="mName" class="in" required></div>
+      <div class="f full"><label for="mMode">Calcul de l'amende</label><select id="mMode" class="in"><option value="fixe">Montant fixe</option><option value="par">Montant par unité (pochon, arme, otage…)</option><option value="x">Multiple de la somme en $</option><option value="surplus">Multiple du surplus au-delà de 10 000 $</option><option value="base">Montant fixe + multiple de la somme</option></select></div>
+      <div class="f" id="fBase" hidden><label for="mBase">Montant fixe ($)</label><input id="mBase" class="in" type="number" min="0" step="any"></div>
+      <div class="f"><label for="mRate" id="mRateLabel">Amende ($)</label><input id="mRate" class="in" type="number" min="0" step="any" required></div>
+      <div class="f" id="fUnit" hidden><label for="mUnit">Unité</label><input id="mUnit" class="in" placeholder="ex. pochon, arme, otage"></div>
+      <div class="f"><label for="mJail">Peine du registre (minutes)</label><input id="mJail" class="in" type="number" min="0" step="1" required><p class="help">1h = 60, 1h30 = 90, 24h = 1440.</p></div>
+      <div class="f full"><label for="mAnnexe">Annexe</label><input id="mAnnexe" class="in" placeholder="ex. Mise en fourrière"></div>
+      <div class="f full"><label class="check big"><input type="checkbox" id="mNc"> Non cumulable (comptée une seule fois)</label></div>
     </div>
     <div class="foot">
       <button type="button" class="btn danger" id="mDelete">Supprimer</button>
@@ -378,162 +409,229 @@ input[type="date"].in, input[type="time"].in { color-scheme: dark; }
 <script>
 if (new URLSearchParams(location.search).has('embed')) document.documentElement.classList.add('embed');
 /* =====================================================================
-   Base des infractions : [nom, catégorie, amende max, peine min, peine max, unité, quantité de référence]
-   Recopiée du MDT. L'unité et la quantité de référence sont des valeurs de départ, modifiables.
+   Registre des infractions Life Side (mise à jour du 09/11/2026).
+   [article, infraction, type, amende, peine (minutes du registre), annexe, options]
+   amende : nombre = montant fixe (multiplié par le nombre de faits, sauf « non cumulable »)
+            ["par", taux, unité]      = taux × quantité (pochons, armes, otages…)
+            ["x", taux]               = taux × somme en $ (ex. ×2 la somme blanchie)
+            ["surplus", taux]         = taux × somme au-delà de 10 000 $
+            ["base", fixe, taux]      = fixe + taux × somme
+   options : nc = non cumulable ; u2/j2 = peine par unité d'une 2e quantité
    ===================================================================== */
-const P = "pochon", PL = "plant", A = "arme";
-const RAW = [
-  ["Violation de domicile","DÉLIT",450,0,10],
-  ["Intrusion criminelle","CRIME",1500,0,15],
-  ["Incendie criminel","CRIME",1500,0,15],
-  ["Vandalisme","INFRACTION",300,0,0],
-  ["Vandalisme de biens gouvernementaux","CRIME",1500,0,20],
-  ["Chasse en zone restreinte","INFRACTION",450,0,0],
-  ["Chasse sans permis","INFRACTION",450,0,0],
-  ["Cruauté envers les animaux","DÉLIT",450,0,10],
-  ["Chasse avec une arme non autorisée","DÉLIT",750,0,10],
-  ["Chasse en dehors des heures autorisées","INFRACTION",750,0,0],
-  ["Dépassement des quotas de chasse","DÉLIT",1000,0,10],
-  ["Braconnage","CRIME",1250,0,20],
-  ["Agression simple","DÉLIT",500,0,7],
-  ["Agression","DÉLIT",850,0,15],
-  ["Agression aggravée","CRIME",1250,0,20],
-  ["Agression avec arme mortelle","CRIME",3750,0,30],
-  ["Homicide involontaire","CRIME",7500,0,60],
-  ["Homicide involontaire au volant","CRIME",7500,0,75],
-  ["Tentative de meurtre d'un civil","CRIME",7500,0,50],
-  ["Meurtre","CRIME",10000,0,100],
-  ["Complicité","CRIME",5000,0,50],
-  ["Meurtre d'un fonctionnaire ou agent de la paix","CRIME",10000,1,150],
-  ["Tentative de meurtre d'un fonctionnaire ou agent de la paix","CRIME",10000,0,65],
-  ["Tentative d'enlèvement","CRIME",450,0,10],
-  ["Prise d'otage","CRIME",1200,0,20],
-  ["Complicité de prise d'otage","CRIME",600,0,10],
-  ["Agression d'un fonctionnaire ou agent de la paix","CRIME",4000,0,25],
-  ["Menaces criminelles","DÉLIT",500,0,5],
-  ["Mise en danger d'autrui","DÉLIT",1000,0,10],
-  ["Fusillade","CRIME",2500,0,30],
-  ["Cannibalisme","CRIME",500,1,30],
-  ["Torture","CRIME",4500,0,40],
-  ["Blanchiment d'argent","DÉLIT",10000,0,25,"$",50000],
-  ["Fraude","DÉLIT",450,0,10],
-  ["Extorsion","DÉLIT",900,0,20],
-  ["Possession de papiers d'identité gouvernementaux volés","DÉLIT",10000,0,20],
-  ["Possession de papiers d'identité volés","DÉLIT",750,0,10],
-  ["Usurpation de la fonction de juge","DÉLIT",10000,0,35],
-  ["Usurpation de la fonction d'agent de la paix ou de fonctionnaire","DÉLIT",2750,0,25],
-  ["Usurpation d'identité","DÉLIT",1250,0,15],
-  ["Corruption d'un fonctionnaire","CRIME",3500,0,20],
-  ["Loi anti-masque","INFRACTION",750,0,0],
-  ["Possession de contrebande dans un établissement gouvernemental","CRIME",1000,0,25],
-  ["Recel de biens volés","DÉLIT",500,0,10],
-  ["Évasion","CRIME",450,0,10],
-  ["Évasion de prison","CRIME",2500,0,30],
-  ["Complicité d'évasion de prison","CRIME",2000,0,25],
-  ["Tentative d'évasion de prison","CRIME",1500,0,20],
-  ["Violation d'une ordonnance d'éloignement","CRIME",2250,0,20],
-  ["Détournement de fonds","CRIME",10000,0,45],
-  ["Utilisation abusive des numéros d'urgence","INFRACTION",600,0,0],
-  ["Conspiration","DÉLIT",450,0,10],
-  ["Conduite en état d'ivresse","DÉLIT",300,0,5],
-  ["Délit de fuite","DÉLIT",400,0,5],
-  ["Refus de priorité à un véhicule d'urgence","INFRACTION",600,0,0],
-  ["Non-respect de la signalisation","INFRACTION",150,0,0],
-  ["Véhicule non conforme","INFRACTION",75,0,0],
-  ["Conduite imprudente","INFRACTION",300,0,0],
-  ["Conduite dangereuse","DÉLIT",750,0,10],
-  ["Excès de vitesse","INFRACTION",225,0,0],
-  ["Conduite sans permis","INFRACTION",500,0,0],
-  ["Demi-tour illégal","INFRACTION",75,0,0],
-  ["Franchissement de ligne","INFRACTION",300,0,0],
-  ["Stationnement interdit","INFRACTION",300,0,0],
-  ["Course de rue illégale","CRIME",1500,0,15],
-  ["Pilotage sans licence valide","CRIME",1500,0,20],
-  ["Possession criminelle d'arme de Classe A","CRIME",500,0,10,A,3],
-  ["Possession criminelle d'arme de Classe B","CRIME",1000,0,15,A,3],
-  ["Possession criminelle d'arme de Classe C","CRIME",3500,0,30,A,3],
-  ["Possession criminelle d'arme de Classe D","CRIME",1500,0,25,A,3],
-  ["Vente criminelle d'arme de Classe A","CRIME",1000,0,15,A,3],
-  ["Vente criminelle d'arme de Classe B","CRIME",2000,0,20,A,3],
-  ["Vente criminelle d'arme de Classe C","CRIME",7000,0,35,A,3],
-  ["Vente criminelle d'arme de Classe D","CRIME",3000,0,30,A,3],
-  ["Utilisation criminelle d'une arme","DÉLIT",450,0,10],
-  ["Possession de modifications d'armes illégales","DÉLIT",300,0,10,"modification",3],
-  ["Trafic d'armes","CRIME",0,0,0],
-  ["Exhibition d'une arme","DÉLIT",500,0,15],
-  ["Insurrection","CRIME",0,0,0],
-  ["Survol d'une zone restreinte","CRIME",1500,0,20],
-  ["Utilisation criminelle d'explosifs","CRIME",2500,0,30],
-  ["Outrage à agent de police","INFRACTION",300,0,0],
-  ["Refus d'obtempérer","INFRACTION",750,0,0],
-  ["Trouble à l'ordre public","INFRACTION",250,0,0],
-  ["Tapage","INFRACTION",350,0,0],
-  ["Fausses déclarations","DÉLIT",750,0,10],
-  ["Harcèlement","DÉLIT",500,0,10],
-  ["Entrave à la justice","DÉLIT",500,0,10],
-  ["Entrave à la justice (crime)","CRIME",900,0,15],
-  ["Vagabondage sur une propriété gouvernementale","INFRACTION",500,0,0],
-  ["Falsification","DÉLIT",500,0,10],
-  ["Falsification de preuves","CRIME",1000,0,20],
-  ["Justice expéditive (milice)","CRIME",1500,0,30],
-  ["Attroupement illégal","DÉLIT",750,0,10],
-  ["Corruption gouvernementale","CRIME",0,0,0],
-  ["Harcèlement criminel (traque)","CRIME",1500,0,40],
-  ["Recel de malfaiteur","DÉLIT",1000,0,10],
-  ["Braquage de la Fleeca Bank","FELONY",10000,10,30],
-  ["Possession de marijuana","DÉLIT",250,0,5,P,10],
-  ["Fabrication de marijuana","CRIME",1000,0,15,P,50],
-  ["Culture de marijuana A","DÉLIT",750,0,10,PL,10],
-  ["Culture de marijuana B","CRIME",1500,0,30,PL,10],
-  ["Possession de marijuana avec intention de revendre","CRIME",3000,0,30,P,30],
-  ["Possession de cocaïne","DÉLIT",500,0,7,P,10],
-  ["Fabrication de cocaïne","CRIME",1500,0,25,P,50],
-  ["Possession de cocaïne avec intention de revendre","CRIME",4500,0,35,P,30],
-  ["Possession de meth","DÉLIT",500,0,7,P,10],
-  ["Fabrication de meth","CRIME",1500,0,25,P,50],
-  ["Possession de meth avec intention de revendre","CRIME",4500,0,35,P,30],
-  ["Possession d'Oxy / Vicodin","DÉLIT",500,0,7,P,10],
-  ["Fabrication d'Oxy / Vicodin","CRIME",1500,0,25,P,50],
-  ["Possession d'Oxy / Vicodin avec intention de revendre","CRIME",4500,0,35,P,30],
-  ["Possession d'ecstasy","DÉLIT",500,0,7,P,10],
-  ["Fabrication d'ecstasy","CRIME",1500,0,25,P,50],
-  ["Possession d'ecstasy avec intention de revendre","CRIME",4500,0,35,P,30],
-  ["Possession d'opium","DÉLIT",500,0,7,P,10],
-  ["Fabrication d'opium","CRIME",1500,0,25,P,50],
-  ["Possession d'opium avec intention de revendre","CRIME",4500,0,35,P,30],
-  ["Trafic de stupéfiants","CRIME",0,0,0],
-  ["Braquage de supérette","INFRACTION",500,0,7],
-  ["Petit vol","INFRACTION",250,0,0],
-  ["Vol de véhicule","CRIME",900,0,15],
-  ["Carjacking","CRIME",2000,0,30],
-  ["Cambriolage","DÉLIT",500,0,10],
-  ["Vol avec violence","CRIME",2000,0,25],
-  ["Complicité de vol avec violence","CRIME",1000,0,12],
-  ["Tentative de vol avec violence","CRIME",1000,0,20],
-  ["Vol à main armée","CRIME",3000,0,30],
-  ["Complicité de vol à main armée","CRIME",1500,0,15],
-  ["Tentative de vol à main armée","CRIME",1500,0,25],
-  ["Vol de grande envergure","CRIME",7500,0,45],
-  ["Filouterie (partir sans payer)","INFRACTION",500,0,0],
-  ["Possession de fausse monnaie","DÉLIT",750,0,10,"$",10000],
-  ["Possession de matériel gouvernemental","DÉLIT",1000,0,15],
-  ["Possession d'outils servant à commettre un crime","DÉLIT",500,0,10],
-  ["Vente d'outils servant à commettre un crime","CRIME",1000,0,15],
-  ["Vol et braquage","INFRACTION",7000,0,20],
-];
-const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-const fromRaw = r => ({ id: slug(r[0]), name: r[0], cat: r[1], fine: r[2], pmin: r[3], pmax: r[4], unit: r[5] || "", ref: r[6] || 1 });
-const DEFAULT_CATALOG = RAW.map(fromRaw);
+const C = "CONTRAVENTION", DM = "DÉLIT MINEUR", DMJ = "DÉLIT MAJEUR", CR = "CRIME";
+const FOUR = "Mise en fourrière", NC = { nc: true };
+const CONF = "Confiscation des produits stupéfiants";
+const SAISIE_ARME = "Saisie des armes et munitions";
+const REGISTRE = [
+  ["C-1", "Attentat à la pudeur", C, 500, 0],
+  ["C-2", "Circulation à contresens", C, 500, 0],
+  ["C-3", "Clandestinité", C, 2500, 0, "Expulsion du territoire"],
+  ["C-4", "Conduite avec un véhicule non en état (plaque, dégradé)", C, 500, 0],
+  ["C-5", "Conduite dangereuse (drift, wheeling…)", C, 750, 5, FOUR],
+  ["C-6", "Conduite hors route / hors piste", C, 750, 0, FOUR],
+  ["C-7", "Demi-tour non autorisé", C, 250, 0],
+  ["C-8", "Dissimulation du visage sur la voie publique ou un lieu public", C, 500, 0],
+  ["C-10", "Entrave à la circulation", C, 250, 0, FOUR],
+  ["C-11", "Excès de vitesse de 5 à 25 km/h", C, 250, 0],
+  ["C-12", "Excès de vitesse de 25 à 50 km/h", C, 500, 0],
+  ["C-13", "Excès de vitesse de plus de 50 km/h", C, 1000, 0],
+  ["C-14", "Franchissement d'une ligne continue", C, 250, 0],
+  ["C-15", "Insulte envers un civil", C, 200, 0, "", NC],
+  ["C-16", "Ivresse ou consommation de stupéfiants sur la voie publique", C, 500, 0],
+  ["C-17", "Non-respect d'un véhicule prioritaire", C, 1000, 0],
+  ["C-18", "Participation à une manifestation illégale", C, 1000, 0],
+  ["C-19", "Refus de priorité piéton sans dommages corporels", C, 150, 0],
+  ["C-20", "Stationnement gênant et/ou interdit (bande rouge)", C, 150, 0, FOUR],
+  ["C-21", "Téléphone au volant", C, 250, 0, "", NC],
+  ["C-22", "Usage abusif du klaxon", C, 250, 0, "", NC],
+  ["C-23", "Véhicule non homologué / non recensé", C, 500, 0, FOUR],
 
-/* ---------- stockage local (brouillon, catalogue modifié, matricule) ---------- */
+  ["DM-1", "Agression sur un civil", DM, 2500, 10],
+  ["DM-2", "Agression sur un représentant de l'État / magistrat", DM, 5000, 20],
+  ["DM-3", "Atteinte au droit à l'image", DM, 1500, 0, "Suppression des images"],
+  ["DM-4", "Braconnage", DM, 2500, 20, "Confiscation de la marchandise"],
+  ["DM-5", "Braquage d'ATM", DM, 2000, 15, "Saisie des outils et de l'ATM"],
+  ["DM-6", "Braquage de supérette", DM, 1500, 10, "Saisie des armes et des objets volés"],
+  ["DM-7", "Cambriolage", DM, 5000, 20],
+  ["DM-8", "Canular téléphonique auprès des services publics", DM, 2500, 10, "", NC],
+  ["DM-9", "Carjacking", DM, 1000, 5],
+  ["DM-10", "Chantage", DM, 3000, 0],
+  ["DM-11", "Conduite d'un véhicule volé", DM, 2000, 5, "Retrait du permis"],
+  ["DM-12", "Conduite sans permis", DM, 2500, 5, "Présentation d'un permis valide sous 24h, mise en fourrière"],
+  ["DM-13", "Conduite sous l'emprise de stupéfiants", DM, 4000, 15, "Retrait du permis et dégrisement"],
+  ["DM-14", "Conduite sous l'emprise d'alcool", DM, 4000, 15, "Retrait du permis et dégrisement"],
+  ["DM-15", "Diffamation", DM, 2500, 0],
+  ["DM-16", "Discrimination", DM, 3000, 5],
+  ["DM-17", "Dégradation de biens privés", DM, 750, 0, "Dédommagement à hauteur des dégradations"],
+  ["DM-18", "Dégradation de biens publics", DM, 1000, 0, "Dédommagement à hauteur des dégradations"],
+  ["DM-19", "Délit de fuite", DM, 2500, 5],
+  ["DM-20", "Entrave à une opération des forces de l'ordre", DM, 2500, 30, "", NC],
+  ["DM-21", "Escroquerie à l'entreprise", DM, 1750, 20, "Restitution à hauteur du préjudice"],
+  ["DM-22", "Escroquerie à la personne", DM, 1500, 20, "Restitution à hauteur du préjudice"],
+  ["DM-24", "Excès de vitesse de plus de 100 km/h", DM, 2000, 15, "Retrait du permis et mise en fourrière"],
+  ["DM-25", "Exhibition d'arme à feu", DM, 1500, 20, "Confiscation de l'arme"],
+  ["DM-26", "Exhibition d'arme blanche", DM, 750, 10, "Confiscation de l'arme"],
+  ["DM-27", "Fouille abusive", DM, 1500, 0],
+  ["DM-28", "Fausse déclaration", DM, 3000, 5, "Interrogatoire de l'individu"],
+  ["DM-29", "Go fast", DM, 250, 15, "Mise en fourrière du véhicule"],
+  ["DM-30", "Harcèlement moral / physique", DM, 2500, 25],
+  ["DM-31", "Menace et/ou intimidation envers un civil", DM, 500, 5],
+  ["DM-32", "Menace et/ou intimidation envers un représentant de l'État", DM, 750, 10],
+  ["DM-33", "Menace de mort", DM, 2000, 20],
+  ["DM-34", "Mise en danger de la vie d'autrui", DM, 2000, 5],
+  ["DM-35", "Non-assistance à personne en danger", DM, 750, 0],
+  ["DM-36", "Non-présentation à une convocation des agents de police", DM, 500, 15, "", NC],
+  ["DM-37", "Non-respect des conditions du PPA", DM, 5000, 20, "Retrait du PPA", NC],
+  ["DM-38", "Organisation d'une manifestation illégale", DM, 750, 20],
+  ["DM-39", "Outrage envers un représentant de l'État / magistrat", DM, 2500, 10],
+  ["DM-40", "Port d'équipements militaires (gilet pare-balles, holster…)", DM, 2500, 0, "Confiscation des équipements"],
+  ["DM-41", "Possession de cocaïne (5 à 25 pochons)", DM, ["par", 250, "pochon"], 15, CONF],
+  ["DM-43", "Possession de weed et variantes (5 à 25 pochons)", DM, ["par", 100, "pochon"], 10, CONF],
+  ["DM-45", "Possession de méthamphétamine (5 à 25 pochons)", DM, ["par", 200, "pochon"], 15, CONF],
+  ["DM-46", "Possession de cocaïne (plus de 25 pochons)", DM, ["par", 300, "pochon"], 25, CONF],
+  ["DM-48", "Possession de weed et variantes (plus de 25 pochons)", DM, ["par", 150, "pochon"], 20, CONF],
+  ["DM-49", "Possession de méthamphétamine (plus de 25 pochons)", DM, ["par", 250, "pochon"], 25, CONF],
+  ["DM-51", "Possession de graines de stupéfiant", DM, ["par", 100, "graine"], 15, CONF],
+  ["DM-52", "Possession de matériel pharmaceutique sans justificatif", DM, 500, 10, "Confiscation des produits"],
+  ["DM-53", "Possession d'argent non traçable", DM, ["x", 0], 0, "Saisie de la totalité de l'argent"],
+  ["DM-54", "Possession de plus de 10 000 $ sans justificatif", DM, ["surplus", 0.5], 15, "Saisie du surplus"],
+  ["DM-55", "Publicité pour des services illicites", DM, 750, 30],
+  ["DM-56", "Incitation à la haine", DM, 1500, 20],
+  ["DM-57", "Refus de décliner son identité", DM, 2500, 0, "", NC],
+  ["DM-58", "Refus d'obtempérer", DM, 750, 0, "", NC],
+  ["DM-59", "Trouble à l'ordre public", DM, 1000, 10],
+  ["DM-60", "Utilisation et/ou présentation de faux papiers", DM, 7500, 35],
+  ["DM-61", "Usurpation d'identité", DM, 5000, 20, "", NC],
+  ["DM-62", "Violation de propriété privée (entreprise, logement…)", DM, 2500, 20],
+  ["DM-63", "Vol", DM, 1000, 5, "Restitution des biens"],
+  ["DM-64", "Vol de véhicule", DM, 2500, 10],
+  ["DM-65", "Vol de véhicule de service public", DM, 5000, 30],
+  ["DM-66", "Participation à une fusillade", DM, 7500, 30, "", NC],
+  ["DM-67", "Port d'une arme légère non déclarée avec PPA", DM, ["par", 5000, "arme"], 20, SAISIE_ARME],
+  ["DM-68", "Incitation à la révolte", DM, 2500, 20],
+  ["DM-69", "Extorsion", DM, 10000, 30],
+  ["DM-70", "Absence de documents légaux d'une entreprise", DM, 5000, 0, "Appel de l'Internal Revenue Service"],
+  ["DM-71", "Violation d'un décret gouvernemental", DM, 5000, 20],
+  ["DM-72", "Utilisation de ses fonctions à des fins personnelles", DM, 1500, 15],
+  ["DM-73", "Plagiat", DM, 500, 0],
+  ["DM-74", "Destruction / dissimulation de preuve", DM, 10000, 20],
+  ["DM-75", "Course de rue illégale", DM, 2000, 15],
+  ["DM-76", "Non-respect du code du travail", DM, ["par", 1500, "employé"], 0],
+  ["DM-77", "Refus de comparaître", DM, 5000, 0],
+  ["DM-78", "Conduite d'un véhicule non adapté (kart, tracteur…)", DM, 250, 10, FOUR],
+  ["DM-79", "Port d'arme de chasse sans permis", DM, 500, 0, "Saisie de l'arme et des munitions"],
+  ["DM-80", "Intrusion dans un bâtiment officiel de l'État", DM, 5000, 15],
+  ["DM-81", "Spam call 911", DM, 1000, 5],
+  ["DM-82", "Harcèlement numérique de service public", DM, 1000, 20],
+  ["DM-83", "Propos discriminatoires", DM, 2500, 15, "", NC],
+  ["DM-84", "Violation de sépulture", DM, 7500, 30, "", NC],
+  ["DM-85", "Tir illégal", DM, 3000, 0, "", NC],
+  ["DM-86", "Possession de matériel illégal (lockpick, outils de crochetage…)", DM, ["x", 0.5], 0, "Saisie du matériel", { nc: true, u2: "objet", j2: 5 }],
+
+  ["DMJ-01", "Abus de pouvoir", DMJ, 10000, 15, "", NC],
+  ["DMJ-02", "Abus de confiance", DMJ, 7500, 10],
+  ["DMJ-03", "Accusation calomnieuse", DMJ, 5000, 10],
+  ["DMJ-04", "Aide à l'évasion", DMJ, 5000, 120, "Interrogatoire de l'individu"],
+  ["DMJ-05", "Atteinte à l'intégrité d'un cadavre", DMJ, 7500, 10, "", NC],
+  ["DMJ-06", "Blanchiment d'argent", DMJ, ["x", 1], 20, "Confiscation de l'argent"],
+  ["DMJ-07", "Braquage à main armée", DMJ, 3000, 20, "Confiscation de l'arme"],
+  ["DMJ-08", "Braquage de bijouterie", DMJ, 10000, 30, "Confiscation de l'argent et des biens volés"],
+  ["DMJ-09", "Braquage de convoi", DMJ, 7500, 40],
+  ["DMJ-10", "Braquage de la Fleeca Bank", DMJ, 10000, 20, "Confiscation de l'argent et des biens volés"],
+  ["DMJ-11", "Braquage d'une entreprise", DMJ, 7500, 30],
+  ["DMJ-12", "Entrave à une enquête", DMJ, 10000, 20],
+  ["DMJ-13", "Espionnage", DMJ, 20000, 90],
+  ["DMJ-14", "Faux témoignage", DMJ, 5000, 10, "Interrogatoire de l'individu"],
+  ["DMJ-15", "Faux et usage de faux", DMJ, 10000, 20],
+  ["DMJ-16", "Fraude électorale", DMJ, 25000, 60, "Exclusion de l'élection en cours, interdiction de se représenter"],
+  ["DMJ-17", "Fraude fiscale", DMJ, ["base", 5000, 2], 40, "Amende de 5 000 $ + 2 × la somme fraudée"],
+  ["DMJ-18", "Détention illégale d'une arme (CAT.1)", DMJ, ["par", 2500, "arme"], 15, SAISIE_ARME],
+  ["DMJ-19", "Détention d'une arme non identifiable — CAT.1", DMJ, ["par", 5000, "arme"], 30, SAISIE_ARME],
+  ["DMJ-19", "Détention d'une arme non identifiable — CAT.2", DMJ, ["par", 10000, "arme"], 30, SAISIE_ARME],
+  ["DMJ-19", "Détention d'une arme non identifiable — CAT.3", DMJ, ["par", 20000, "arme"], 30, SAISIE_ARME],
+  ["DMJ-20", "Intimidation / chantage envers un magistrat", DMJ, 15000, 30],
+  ["DMJ-21", "Complicité de meurtre", DMJ, 30000, 120, "", NC],
+  ["DMJ-22", "Menace avec une arme", DMJ, 5000, 10, "", NC],
+  ["DMJ-23", "Non-respect d'une décision de justice d'un magistrat", DMJ, 7500, 60],
+  ["DMJ-24", "Kidnapping / séquestration sur un civil", DMJ, 5000, 20],
+  ["DMJ-25", "Kidnapping / séquestration sur un agent de l'État", DMJ, 10000, 30],
+  ["DMJ-26", "Non-présentation à une convocation de justice ou fédérale", DMJ, 15000, 120, "Mandat d'arrêt", NC],
+  ["DMJ-27", "Non-respect d'une mesure de contrôle judiciaire", DMJ, 2000, 30, "Arrestation de l'individu (30 min maximum)"],
+  ["DMJ-28", "Parjure", DMJ, 4000, 0, "", NC],
+  ["DMJ-29", "Port illégal d'une arme légère (CAT.2)", DMJ, ["par", 10000, "arme"], 20, SAISIE_ARME],
+  ["DMJ-30", "Port illégal d'une arme lourde (CAT.3)", DMJ, ["par", 20000, "arme"], 30, SAISIE_ARME],
+  ["DMJ-31", "Possession de plus de 10 000 $ sans justificatif (délit majeur)", DMJ, ["surplus", 2], 0, "Saisie du surplus"],
+  ["DMJ-32", "Prise d'otage sur un civil", DMJ, ["par", 1500, "otage"], 20],
+  ["DMJ-33", "Prise d'otage sur un représentant de l'État", DMJ, ["par", 3000, "otage"], 30],
+  ["DMJ-34", "Publication de contenu illicite", DMJ, 1500, 30],
+  ["DMJ-35", "Retrait ou détérioration d'un bracelet électronique", DMJ, 2000, 20, "Incarcération de l'individu"],
+  ["DMJ-36", "Tentative de meurtre", DMJ, 10000, 60, "", NC],
+  ["DMJ-37", "Tentative de meurtre sur un agent de l'État / magistrat", DMJ, 30000, 120, "", NC],
+  ["DMJ-38", "Trafic de stupéfiants (30 pochons ou plus)", DMJ, 15000, 60, "Saisie de la marchandise"],
+  ["DMJ-39", "Trafic d'armes (moins de 4 armes) — CAT.1", DMJ, ["par", 10000, "arme"], 120, "Saisie des armes"],
+  ["DMJ-39", "Trafic d'armes (moins de 4 armes) — CAT.2", DMJ, ["par", 20000, "arme"], 120, "Saisie des armes"],
+  ["DMJ-39", "Trafic d'armes (moins de 4 armes) — CAT.3", DMJ, ["par", 40000, "arme"], 120, "Saisie des armes"],
+  ["DMJ-40", "Travail dissimulé", DMJ, 10000, 60, "Transfert du dossier à l'IRS"],
+  ["DMJ-41", "Usurpation de fonction (uniforme / véhicule)", DMJ, 10000, 60, "Saisie des vêtements, mise en conformité du véhicule", NC],
+  ["DMJ-42", "Utilisation illégale d'une arme", DMJ, 2500, 15, "Saisie de l'arme"],
+  ["DMJ-43", "Usage criminel d'une arme", DMJ, 5000, 30, "Saisie de l'arme"],
+  ["DMJ-44", "Violation de l'article sur le journalisme", DMJ, 0, 30, "15 000 $ payés par le journaliste + 5 000 $ par l'entreprise, effacement de l'article"],
+  ["DMJ-45", "Violation du secret professionnel / médical", DMJ, 10000, 30, "Informations transférées au patron de l'individu"],
+  ["DMJ-46", "Homicide involontaire", DMJ, 15000, 60],
+
+  ["CRM-01", "Terrorisme", CR, 90000, 600],
+  ["CRM-02", "Braquage de banque fédérale (Pacific Bank)", CR, 50000, 240, "Confiscation du butin et de l'argent"],
+  ["CRM-03", "Association de malfaiteurs", CR, 7500, 120],
+  ["CRM-04", "Braquage de convoi fédéral", CR, 35000, 60, "Confiscation de la marchandise"],
+  ["CRM-05", "Chef d'une organisation criminelle", CR, 30000, 120],
+  ["CRM-06", "Coup d'État", CR, 100000, 1440],
+  ["CRM-08", "Détournement de fonds / fonds publics", CR, 50000, 120, "Remboursement intégral"],
+  ["CRM-09", "Tentative d'évasion", CR, 5000, 360, "Renvoi à Bolingbroke, temps cumulé à la peine restante"],
+  ["CRM-10", "Évasion", CR, 10000, 240],
+  ["CRM-11", "Assassinat", CR, 75000, 480],
+  ["CRM-12", "Incendie criminel", CR, 25000, 60],
+  ["CRM-13", "Harcèlement sexuel / viol", CR, 0, 0, "Peine de mort (jugement du DOJ)"],
+  ["CRM-14", "Pédophilie", CR, 0, 0, "Peine de mort (jugement du DOJ)"],
+  ["CRM-15", "Trafic d'organes / d'êtres humains", CR, 75000, 300],
+  ["CRM-16", "Haute trahison envers le gouvernement / DOJ", CR, 85000, 1440],
+  ["CRM-17", "Trafic de stupéfiants à grande échelle (500 pochons ou plus)", CR, 50000, 240, "Saisie de la marchandise"],
+  ["CRM-18", "Trafic d'armes à grande échelle (4 armes ou plus)", CR, 50000, 360, "Saisie des armes (CAT.1 10 000 $, CAT.2 20 000 $, CAT.3 40 000 $ par arme)"],
+  ["CRM-19", "Blanchiment / possession d'argent à grande échelle (150 000 $ ou plus)", CR, 60000, 180, "Saisie de l'argent"],
+  ["CRM-20", "Cavale", CR, 5000, 720, "Transfert à Bolingbroke, temps cumulé à la peine restante"],
+  ["CRM-21", "Corruption", CR, 15000, 120, "Révocation définitive"],
+  ["CRM-22", "Meurtre", CR, 30000, 180, "", NC],
+  ["CRM-23", "Meurtre sur un agent de l'État / magistrat", CR, 50000, 240],
+  ["CRM-24", "Acte de torture et de barbarie", CR, 30000, 1080],
+  ["CRM-25", "Obstruction grave à la justice", CR, 20000, 120],
+  ["CRM-26", "Violation des amendements des États-Unis", CR, 80000, 1800],
+];
+
+const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+function fromRaw(r) {
+  const [code, name, type, f, jail, annexe = "", o = {}] = r;
+  let mode = "fixe", rate = 0, base = 0, unit = "";
+  if (typeof f === "number") rate = f;
+  else if (f[0] === "par") { mode = "par"; rate = f[1]; unit = f[2]; }
+  else if (f[0] === "x") { mode = "x"; rate = f[1]; unit = "$"; }
+  else if (f[0] === "surplus") { mode = "surplus"; rate = f[1]; unit = "$"; }
+  else if (f[0] === "base") { mode = "base"; base = f[1]; rate = f[2]; unit = "$"; }
+  const cat = name.match(/CAT\.(\d)$/);
+  return { id: slug(code + (cat ? "-cat" + cat[1] : "")), code, name, type, mode, rate, base, unit, jail, annexe, nc: !!o.nc, u2: o.u2 || "", j2: o.j2 || 0 };
+}
+const DEFAULT_CATALOG = REGISTRE.map(fromRaw);
+const TYPES = [C, DM, DMJ, CR];
+const MODES = { fixe: "Montant fixe", par: "Montant par unité", x: "Multiple de la somme ($)", surplus: "Multiple du surplus au-delà de 10 000 $", base: "Fixe + multiple de la somme ($)" };
+
+/* ---------- stockage local ---------- */
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
   del(k) { try { localStorage.removeItem(k); } catch (e) {} },
 };
-let catalog = store.get("lspd-catalog-v1", null) || DEFAULT_CATALOG.map(o => ({ ...o }));
+const CAT_KEY = "lspd-registre-v4", DRAFT_KEY = "lspd-draft-v3";
+let catalog = store.get(CAT_KEY, null) || DEFAULT_CATALOG.map(o => ({ ...o }));
 const byId = id => catalog.find(c => c.id === id);
-const saveCatalog = () => store.set("lspd-catalog-v1", catalog);
+const saveCatalog = () => store.set(CAT_KEY, catalog);
 
 /* ---------- état du rapport ---------- */
 const pad = n => String(n).padStart(2, "0");
@@ -543,61 +641,84 @@ function blankState() {
     date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
     heure: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
     lieu: "", agent: store.get("lspd-agent", ""), prenom: "", nom: "",
-    charges: [], deroulement: "", cash: "", autres: "", weapons: [], example: false,
+    charges: [], deroulement: "", cash: "", autres: "", weapons: [], mineur: false, impaye: "", example: false,
   };
 }
-const EXAMPLE = {
-  date: "2026-10-31", heure: "00:56", lieu: "Proche Pacific Bank", agent: "04", prenom: "Lean", nom: "Gram",
-  charges: [
-    { id: "possession-de-fausse-monnaie", qty: 15522 },
-    { id: "delit-de-fuite", qty: 1 },
-    { id: "refus-d-obtemperer", qty: 1 },
-    { id: "possession-de-meth-avec-intention-de-revendre", qty: 8 },
-  ],
-  deroulement: "En patrouille avec 60, nous recevons une alerte pour vente de drogue au niveau de la Pacific Bank. Nous arrivons discrètement sur zone et observons une individue tendre à plusieurs reprises quelque chose à des individus. Au même moment, une alerte de vente de drogue survient à cet endroit précis : nous partons l'interpeller. Elle sort alors un skateboard et prend la fuite.\nUn autre véhicule tente de venir l'aider, sans succès. Après plusieurs minutes, elle poursuit à pied ; nous la suivons. Après de nombreuses sommations, l'individu en voiture tente de récupérer Mme Gram : nous faisons alors usage du taser sur Mme Gram.",
-  cash: "12000", autres: "", weapons: [{ name: "Couteau", blanche: true }], example: true,
-};
-let state = store.get("lspd-draft-v1", null);
+let state = store.get(DRAFT_KEY, null);
 if (!state || state.example) state = blankState();
 state.charges = state.charges.filter(c => byId(c.id));
-const save = () => store.set("lspd-draft-v1", state);
+const save = () => store.set(DRAFT_KEY, state);
+
+/* ---------- formats ---------- */
+const money = n => `${Math.round(n).toLocaleString("fr-FR").replace(/ | /g, " ")} $`;
+const fmtReg = m => { if (!m) return "0 min"; const h = Math.floor(m / 60), r = m % 60; return h ? `${h}h${r ? pad(r) : ""}` : `${r} min`; };
+const fmtMDT = m => { if (!m) return "aucune"; const h = Math.floor(m / 60), r = m % 60; return [h ? `${h} ${h > 1 ? "années" : "année"}` : "", r ? `${r} mois` : ""].filter(Boolean).join(" et "); };
+const plural = (u, q) => (q > 1 && u && u !== "$" && !/s$/.test(u)) ? u + "s" : u;
+const qtyLabel = (u, q) => u === "$" ? money(q) : `${q} ${plural(u, q)}`;
+function fineLabel(i) {
+  if (i.mode === "fixe") return i.rate ? money(i.rate) : "—";
+  if (i.mode === "par") return `${money(i.rate)} / ${i.unit}`;
+  if (i.mode === "x" && !i.rate) return "Pas d'amende";
+  if (i.mode === "x") return i.rate === 1 ? "Égale à la somme" : `${String(i.rate).replace(".", ",")} × la somme`;
+  if (i.mode === "surplus") return `${String(i.rate).replace(".", ",")} × le surplus au-delà de 10 000 $`;
+  return `${money(i.base)} + ${i.rate} × la somme`;
+}
+const jailLabel = i => i.u2 ? `${i.j2} min / ${i.u2}` : (i.jail ? `${fmtReg(i.jail)} (MDT : ${fmtMDT(i.jail)})` : "Pas de prison");
+const qtyUnit = i => i.mode === "fixe" ? (i.nc ? "" : "fois") : i.unit;
 
 /* ---------- calculs ---------- */
 function penalty(line) {
   const inf = byId(line.id);
-  const q = Math.max(1, Math.floor(Number(line.qty) || 1));
-  const ref = Math.max(1, Number(inf.ref) || 1);
-  const ratio = Math.min(q, ref) / ref;
-  const jail = inf.pmax > 0 ? Math.min(inf.pmax, Math.max(inf.pmin, Math.ceil(inf.pmax * ratio))) : 0;
-  return { inf, q, fine: inf.fine, jail };
+  const q = Math.max(inf.mode === "fixe" ? 1 : 0, Math.floor(Number(line.qty) || 0));
+  const q2 = Math.max(0, Math.floor(Number(line.qty2) || 0));
+  const n = inf.mode === "fixe" ? (inf.nc ? 1 : q) : 1;
+  let fine;
+  if (inf.mode === "fixe") fine = inf.rate * n;
+  else if (inf.mode === "par" || inf.mode === "x") fine = inf.rate * q;
+  else if (inf.mode === "surplus") fine = inf.rate * Math.max(0, q - 10000);
+  else fine = inf.base + inf.rate * q;
+  const jail = inf.u2 ? inf.j2 * q2 : inf.jail * n;
+  return { inf, q, q2, n, fine: Math.round(fine), jail };
 }
-const plural = (unit, q) => (q > 1 && unit && unit !== "$" && !/s$/.test(unit)) ? unit + "s" : unit;
-const qtyLabel = (inf, q) => inf.unit === "$" ? `${q}$` : (inf.unit ? `${q} ${plural(inf.unit, q)}` : `${q}`);
-const lineParts = p => [p.fine > 0 ? `${p.fine}$` : null, p.jail > 0 ? `${p.jail}Mois` : null].filter(Boolean);
+function totals() {
+  const ps = state.charges.map(penalty);
+  let fine = ps.reduce((a, p) => a + p.fine, 0), jail = ps.reduce((a, p) => a + p.jail, 0);
+  const notes = [];
+  if (state.mineur) {
+    fine = Math.min(50000, Math.ceil(fine / 2)); jail = Math.min(1200, Math.ceil(jail / 2));
+    notes.push("Moins de 21 ans : amende et prison divisées par 2 (plafonds 50 000 $ et 20h)");
+  }
+  const unpaid = Math.min(fine, Math.max(0, Math.floor(Number(state.impaye) || 0)));
+  const conv = unpaid ? Math.min(1200, Math.ceil(unpaid / 100)) : 0;
+  if (conv) notes.push(`Non-solvabilité : ${money(unpaid)} convertis en ${fmtReg(conv)} de prison (1 000 $ = 10 min, 20h maximum)`);
+  return { ps, fine, jail, unpaid, conv, jailTotal: jail + conv, notes };
+}
+const lieuPeine = m => m > 1440 ? "Prison fédérale" : m > 480 ? "Pénitencier de Bolingbroke" : "Cellule du poste de police";
 
-const DRUGS = [[/marijuana/, "marijuana"], [/cocaine/, "cocaïne"], [/meth/, "meth"], [/oxy/, "Oxy / Vicodin"], [/ecstasy/, "ecstasy"], [/opium/, "opium"]];
-function seizures() {
-  const items = [];
-  const drugs = {};
-  for (const line of state.charges) {
-    const p = penalty(line);
-    if (p.inf.id.includes("fausse-monnaie")) items.push(`${p.q}$ d'argent sale (fausse monnaie)`);
-    const d = DRUGS.find(([re]) => re.test(p.inf.id));
-    if (d && p.inf.unit) {
-      const key = d[1] + "|" + p.inf.unit;
-      drugs[key] = Math.max(drugs[key] || 0, p.q);   // même stock déclaré dans plusieurs charges : compté une fois
-    }
+const DRUGS = [[/cocaine/, "cocaïne"], [/heroine/, "héroïne"], [/weed/, "weed"], [/psilocybine/, "psilocybine"], [/methamphetamine/, "méthamphétamine"], [/graines/, "graines de stupéfiant"]];
+function seizures(t) {
+  const items = [], drugs = {};
+  for (const p of t.ps) {
+    const key = slug(p.inf.name);
+    const d = DRUGS.find(([re]) => re.test(key));
+    if (d && p.inf.mode === "par") drugs[d[1]] = Math.max(drugs[d[1]] || 0, p.q);
+    if (p.inf.code === "C-9") items.push("produits stupéfiants (5 pochons ou moins)");
+    if (p.inf.code === "DM-53" && p.q) items.push(`${money(p.q)} d'argent non traçable`);
+    if (p.inf.code === "DMJ-06" && p.q) items.push(`${money(p.q)} d'argent blanchi`);
   }
-  for (const [key, q] of Object.entries(drugs)) {
-    const [drug, unit] = key.split("|");
-    items.push(`${q} ${plural(unit, q)} de ${drug}`);
-  }
+  for (const [drug, q] of Object.entries(drugs)) items.push(drug.startsWith("graines") ? `${q} ${plural("graine", q)} de stupéfiant` : `${q} ${plural("pochon", q)} de ${drug}`);
   const cash = Math.floor(Number(state.cash) || 0);
-  if (cash > 10000) items.push(`${cash - 10000}$ d'argent liquide (somme au-delà de 10 000$ sur ${cash}$)`);
-  const guns = state.weapons.filter(w => w.name.trim() && !w.blanche).map(w => w.name.trim());
-  if (guns.length) items.push(guns.join(", "));
+  const surplusCharged = t.ps.some(p => p.inf.mode === "surplus");
+  if (surplusCharged && cash > 10000) items.push(`${money(cash - 10000)} d'argent liquide (surplus au-delà de 10 000 $ sur ${money(cash)})`);
+  const guns = state.weapons.filter(w => w.name.trim() && w.cat !== "1").map(w => `${w.name.trim()} (CAT.${w.cat})`);
+  if (guns.length) items.push(guns.join(", ") + " et munitions");
   if (state.autres.trim()) items.push(state.autres.trim());
   return items;
+}
+function annexes(t) {
+  const out = [];
+  for (const p of t.ps) if (p.inf.annexe && !/saisie|confiscation|amende égale|amende de/i.test(p.inf.annexe) && !out.includes(p.inf.annexe)) out.push(p.inf.annexe);
+  return out;
 }
 
 function fmtDate(iso) { if (!iso) return ""; const [y, m, d] = iso.split("-"); return `${d}/${m}/${y}`; }
@@ -605,28 +726,33 @@ function fmtTime(t) { if (!t) return ""; const [h, m] = t.split(":"); return `${
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fullName = () => [state.prenom.trim(), state.nom.trim()].filter(Boolean).join(" ");
 const reportTitle = () => `Rapport d'Arrestation - ${fullName() || "Prénom Nom"}`;
-
+function lineText(p) {
+  const i = p.inf, bits = [];
+  if (i.mode === "fixe" && !i.nc && p.n > 1) bits.push(`x${p.n}`);
+  if (i.mode !== "fixe" && p.q) bits.push(i.u2 ? `(valeur ${money(p.q)})` : `(${qtyLabel(i.unit, p.q)})`);
+  if (i.u2 && p.q2) bits.push(`(${p.q2} ${plural(i.u2, p.q2)})`);
+  const cost = [p.fine ? money(p.fine) : "", p.jail ? fmtReg(p.jail) : ""].filter(Boolean).join(" + ") || "sans amende ni prison";
+  return `${i.code} · ${i.name}${bits.length ? " " + bits.join(" ") : ""} : ${cost}`;
+}
 function buildReport() {
-  const ps = state.charges.map(penalty);
-  const fine = ps.reduce((a, p) => a + p.fine, 0);
-  const jail = ps.reduce((a, p) => a + p.jail, 0);
-  const parts = ps.flatMap(lineParts);
-  const seized = seizures();
-  const qual = ps.map(p => p.inf.name.toLowerCase()).join(", ");
-  const details = ps.map(p => p.inf.name + ((p.q > 1 || p.inf.unit) ? ` x${p.q}` : ""));
+  const t = totals();
+  const seized = seizures(t), anx = annexes(t);
   return {
-    fine, jail,
+    t,
     general: [
       ["Date de l'intervention", fmtDate(state.date)],
       ["Heure de l'arrestation", fmtTime(state.heure)],
       ["Lieu de l'intervention", state.lieu.trim()],
       ["Agent rédacteur", state.agent.trim()],
-      ["Qualification des faits", qual],
+      ["Qualification des faits", t.ps.map(p => p.inf.name.charAt(0).toLowerCase() + p.inf.name.slice(1)).join(", ")],
     ],
     name: fullName(),
-    details,
-    initial: parts.join(" + ") || "0$",
-    total: `${fine}$ + ${jail}Mois`,
+    details: t.ps.map(lineText),
+    total: `${money(t.fine)} + ${fmtMDT(t.jailTotal)}`,
+    registre: fmtReg(t.jailTotal),
+    lieu: t.jailTotal ? lieuPeine(t.jailTotal) : "",
+    notes: t.notes,
+    annexes: anx,
     deroulement: state.deroulement.trim(),
     saisie: seized.length ? seized.join(", ") : "Aucune",
   };
@@ -638,7 +764,8 @@ function toHTML(r, preview) {
 <p><strong>Identité des Mis en Cause : ${v(r.name)}</strong></p>
 <p><strong>Détails des Infractions et Charges Retenues:</strong></p>
 <ul>${r.details.length ? r.details.map(d => `<li>${esc(d)}</li>`).join("") : `<li>${v("")}</li>`}</ul>
-<ul><li><strong>Peine initiale : ${esc(r.initial)}</strong></li><li><strong>Total: ${esc(r.total)}</strong></li></ul>
+<ul><li><strong>Total: ${esc(r.total)}</strong> (registre : ${esc(r.registre)}${r.lieu ? ", " + esc(r.lieu) : ""})</li>${r.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>
+${r.annexes.length ? `<p><strong>Mesures annexes:</strong> ${esc(r.annexes.join(", "))}</p>` : ""}
 <p><strong>Déroulement de l'Interpellation:</strong></p>
 <p>${r.deroulement ? esc(r.deroulement).replace(/\n/g, "<br>") : v("")}</p>
 <p><strong>Saisie:</strong> ${esc(r.saisie)}</p>`;
@@ -650,8 +777,9 @@ function toText(r) {
     `Identité des Mis en Cause : ${r.name}`,
     "Détails des Infractions et Charges Retenues:", "",
     ...r.details.map(d => `* ${d}`), "",
-    `* Peine initiale : ${r.initial}`,
-    `* Total: ${r.total}`, "",
+    `* Total: ${r.total} (registre : ${r.registre}${r.lieu ? ", " + r.lieu : ""})`,
+    ...r.notes.map(n => `* ${n}`), "",
+    ...(r.annexes.length ? [`Mesures annexes: ${r.annexes.join(", ")}`, ""] : []),
     "Déroulement de l'Interpellation:", r.deroulement, "",
     `Saisie: ${r.saisie}`,
   ].join("\n");
@@ -659,20 +787,28 @@ function toText(r) {
 
 /* ---------- rendu ---------- */
 const $ = id => document.getElementById(id);
-const FIELDS = ["date", "heure", "lieu", "agent", "prenom", "nom", "deroulement", "cash", "autres"];
+const FIELDS = ["date", "heure", "lieu", "agent", "prenom", "nom", "deroulement", "cash", "autres", "impaye"];
+const typeClass = t => ({ [C]: "t-c", [DM]: "t-dm", [DMJ]: "t-dmj", [CR]: "t-cr" }[t] || "");
 
 function renderChips() {
-  $("chips").innerHTML = state.charges.map(c => `<span class="chip">${esc(byId(c.id).name)}<button type="button" aria-label="Retirer ${esc(byId(c.id).name)}" data-remove="${c.id}">×</button></span>`).join("");
+  $("chips").innerHTML = state.charges.map(c => { const i = byId(c.id); return `<span class="chip"><b>${esc(i.code)}</b> ${esc(i.name)}<button type="button" aria-label="Retirer ${esc(i.name)}" data-remove="${c.id}">×</button></span>`; }).join("");
   $("countHint").textContent = state.charges.length ? `${state.charges.length} sélectionnée(s)` : "";
+}
+function qtyInput(i, val, key, unit, label) {
+  return `<div class="qty"><input type="number" min="${key === "qty" && i.mode === "fixe" ? 1 : 0}" step="1" value="${val}" data-${key}="${i.id}" aria-label="${esc(label)}"><span>${esc(unit)}</span></div>`;
 }
 function renderCharges() {
   const box = $("charges");
   if (!state.charges.length) { box.innerHTML = `<div class="empty">Aucune charge. Ajoutez des infractions dans « Qualification des faits ».</div>`; return; }
   box.innerHTML = state.charges.map(c => {
     const p = penalty(c), i = p.inf;
+    let qty = "";
+    if (i.mode === "fixe" && i.nc) qty = `<div class="qty"><span class="nc">Non cumulable</span></div>`;
+    else qty = qtyInput(i, i.mode === "fixe" ? p.n : (c.qty ?? ""), "qty", i.mode === "fixe" ? "fois" : (i.unit === "$" ? (i.mode === "surplus" ? "$ trouvés" : "$") : plural(i.unit, 2)), `Quantité pour ${i.name}`);
+    if (i.u2) qty += qtyInput(i, c.qty2 ?? "", "qty2", plural(i.u2, 2), `Nombre de ${i.u2}s`);
     return `<div class="charge">
-      <div><div class="name">${esc(i.name)}</div><div class="scale">$0 – $${i.fine} · ${i.pmin} – ${i.pmax} mois${i.ref > 1 ? ` · max dès ${qtyLabel(i, i.ref)}` : ""}</div></div>
-      <div class="qty"><input type="number" min="1" step="1" value="${p.q}" data-qty="${i.id}" aria-label="Quantité pour ${esc(i.name)}"><span>${esc(i.unit ? plural(i.unit, 2) : "fois")}</span></div>
+      <div><div class="name"><span class="code">${esc(i.code)}</span>${esc(i.name)}</div><div class="scale">${esc(fineLabel(i))} · ${esc(jailLabel(i))}${i.annexe ? ` · ${esc(i.annexe)}` : ""}</div></div>
+      <div class="qtys">${qty}</div>
       <div class="pen" data-pen="${i.id}"></div>
       <button type="button" class="x" data-remove="${i.id}" aria-label="Retirer ${esc(i.name)}">×</button>
     </div>`;
@@ -681,31 +817,36 @@ function renderCharges() {
 function renderWeapons() {
   $("weapons").innerHTML = state.weapons.map((w, i) => `<div class="wrow">
     <input class="in" value="${esc(w.name)}" placeholder="ex. Pistolet de combat" data-wname="${i}" aria-label="Nom de l'arme ${i + 1}">
-    <label class="check"><input type="checkbox" data-wblanche="${i}" ${w.blanche ? "checked" : ""}> Arme blanche</label>
+    <select class="in" data-wcat="${i}" aria-label="Catégorie de l'arme ${i + 1}">${["1", "2", "3"].map(k => `<option value="${k}"${w.cat === k ? " selected" : ""}>CAT.${k}${k === "1" ? " · blanche" : k === "2" ? " · légère" : " · lourde"}</option>`).join("")}</select>
     <button type="button" class="x" data-wdel="${i}" aria-label="Retirer l'arme">×</button></div>`).join("");
 }
 function renderOutputs() {
   for (const c of state.charges) {
     const el = document.querySelector(`[data-pen="${c.id}"]`);
-    if (el) { const p = penalty(c); el.innerHTML = `${p.fine}$${p.jail ? ` + ${p.jail} mois` : ""}<small>${p.jail ? "prison calculée" : "pas de prison"}</small>`; }
+    if (el) { const p = penalty(c); el.innerHTML = `${money(p.fine)}<small>${p.jail ? `${fmtReg(p.jail)} · MDT ${fmtMDT(p.jail)}` : "pas de prison"}</small>`; }
   }
-  const r = buildReport();
-  $("totFine").textContent = `${r.fine}$`;
-  $("totJail").textContent = `${r.jail} mois`;
-  $("calc").textContent = state.charges.length ? `Peine initiale : ${r.initial}` : "";
+  const r = buildReport(), t = r.t;
+  $("totFine").textContent = money(t.fine);
+  $("totMDT").textContent = fmtMDT(t.jailTotal);
+  $("totReg").textContent = t.jailTotal ? fmtReg(t.jailTotal) : "0 min";
+  $("totLieu").textContent = t.jailTotal ? lieuPeine(t.jailTotal) : "Pas d'incarcération";
+  $("calc").innerHTML = [...t.notes, ...(t.jailTotal > 30 ? ["Peine de plus de 30 min : validation par un gradé ou le procureur."] : [])].map(n => `<div>${esc(n)}</div>`).join("");
   $("seizedText").textContent = r.saisie;
+  $("annexText").textContent = r.annexes.length ? r.annexes.join(" · ") : "Aucune";
   $("titleOut").textContent = reportTitle();
   $("doc").innerHTML = toHTML(r, true);
   const miss = [];
   if (!state.date) miss.push("date"); if (!state.heure) miss.push("heure"); if (!state.lieu.trim()) miss.push("lieu");
   if (!state.agent.trim()) miss.push("agent rédacteur"); if (!fullName()) miss.push("identité");
   if (!state.charges.length) miss.push("infractions"); if (!state.deroulement.trim()) miss.push("déroulement");
+  for (const p of t.ps) if (p.inf.mode !== "fixe" && !p.q) miss.push(`quantité ${p.inf.code}`);
   $("missing").hidden = !miss.length;
   $("missing").textContent = miss.length ? `À compléter : ${miss.join(", ")}.` : "";
   $("exampleBanner").hidden = !state.example;
 }
 function renderAll() {
   for (const f of FIELDS) $(f).value = state[f] ?? "";
+  $("mineur").checked = !!state.mineur;
   renderChips(); renderCharges(); renderWeapons(); renderOutputs();
 }
 function changed(structural) {
@@ -715,6 +856,7 @@ function changed(structural) {
 
 /* ---------- saisie du formulaire ---------- */
 for (const f of FIELDS) $(f).addEventListener("input", e => { state[f] = e.target.value; if (f === "agent") store.set("lspd-agent", e.target.value); changed(false); });
+$("mineur").addEventListener("change", e => { state.mineur = e.target.checked; changed(false); });
 document.addEventListener("click", e => {
   const rm = e.target.closest("[data-remove]");
   if (rm) { state.charges = state.charges.filter(c => c.id !== rm.dataset.remove); changed(true); }
@@ -722,38 +864,38 @@ document.addEventListener("click", e => {
   if (wd) { state.weapons.splice(+wd.dataset.wdel, 1); renderWeapons(); changed(false); }
 });
 $("charges").addEventListener("input", e => {
-  const id = e.target.dataset.qty; if (!id) return;
-  const c = state.charges.find(x => x.id === id); c.qty = Math.max(1, Math.floor(Number(e.target.value) || 1));
+  const id = e.target.dataset.qty || e.target.dataset.qty2; if (!id) return;
+  const c = state.charges.find(x => x.id === id);
+  if (e.target.dataset.qty) c.qty = e.target.value; else c.qty2 = e.target.value;
   changed(false);
 });
 $("weapons").addEventListener("input", e => {
   if (e.target.dataset.wname !== undefined) state.weapons[+e.target.dataset.wname].name = e.target.value;
-  if (e.target.dataset.wblanche !== undefined) state.weapons[+e.target.dataset.wblanche].blanche = e.target.checked;
+  if (e.target.dataset.wcat !== undefined) state.weapons[+e.target.dataset.wcat].cat = e.target.value;
   changed(false);
 });
-$("addWeapon").addEventListener("click", () => { state.weapons.push({ name: "", blanche: false }); renderWeapons(); changed(false); document.querySelector(`[data-wname="${state.weapons.length - 1}"]`).focus(); });
+$("addWeapon").addEventListener("click", () => { state.weapons.push({ name: "", cat: "2" }); renderWeapons(); changed(false); document.querySelector(`[data-wname="${state.weapons.length - 1}"]`).focus(); });
 
 /* ---------- sélecteur d'infractions ---------- */
 const search = $("search"), dd = $("dropdown");
 let matches = [], active = 0;
 const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 function openDropdown() {
-  const q = norm(search.value.trim());
-  const words = q.split(/\s+/).filter(Boolean);
-  matches = catalog.filter(c => words.every(w => norm(c.name + " " + c.cat).includes(w)));
+  const words = norm(search.value.trim()).split(/\s+/).filter(Boolean);
+  matches = catalog.filter(c => words.every(w => norm(c.code + " " + c.name + " " + c.type).includes(w)));
   active = Math.min(active, Math.max(0, matches.length - 1));
   dd.innerHTML = matches.length ? matches.map((c, i) => {
     const taken = state.charges.some(x => x.id === c.id);
     return `<div class="opt${i === active ? " active" : ""}${taken ? " taken" : ""}" role="option" data-pick="${c.id}" aria-selected="${i === active}">
-      <span>${esc(c.name)}</span><span class="badge">${c.cat}</span>
-      <span class="meta">Amende $0 – $${c.fine} · Peine ${c.pmin} – ${c.pmax} mois${taken ? " · déjà ajoutée" : ""}</span></div>`;
+      <span><span class="code">${esc(c.code)}</span>${esc(c.name)}</span><span class="badge ${typeClass(c.type)}">${c.type}</span>
+      <span class="meta">${esc(fineLabel(c))} · ${esc(jailLabel(c))}${taken ? " · déjà ajoutée" : ""}</span></div>`;
   }).join("") : `<div class="empty">Aucune infraction ne correspond. Vous pouvez la créer dans l'onglet Infractions.</div>`;
   dd.hidden = false; search.setAttribute("aria-expanded", "true");
   const a = dd.querySelector(".opt.active"); if (a) a.scrollIntoView({ block: "nearest" });
 }
 function closeDropdown() { dd.hidden = true; search.setAttribute("aria-expanded", "false"); }
 function addCharge(id) {
-  if (!state.charges.some(c => c.id === id)) state.charges.push({ id, qty: 1 });
+  if (!state.charges.some(c => c.id === id)) state.charges.push({ id, qty: byId(id).mode === "fixe" ? 1 : "" });
   state.example = false; search.value = ""; active = 0; changed(true); openDropdown();
 }
 search.addEventListener("focus", openDropdown);
@@ -807,15 +949,15 @@ $("exampleClear").addEventListener("click", () => { state = blankState(); save()
 $("agentDefault").value = store.get("lspd-agent", "");
 $("agentDefault").addEventListener("input", e => { store.set("lspd-agent", e.target.value); if (!state.agent) { state.agent = e.target.value; $("agent").value = e.target.value; changed(false); } });
 
-/* ---------- catalogue d'infractions ---------- */
+/* ---------- registre des infractions ---------- */
 function renderCards() {
   const q = norm($("isearch").value.trim()), cat = $("icat").value;
-  const list = catalog.filter(c => (!cat || c.cat === cat) && norm(c.name).includes(q));
+  const list = catalog.filter(c => (!cat || c.type === cat) && norm(c.code + " " + c.name).includes(q));
   $("cards").innerHTML = list.length ? list.map(c => `<div class="icard">
-    <div class="top"><span class="t">${esc(c.name)}</span><span class="badge">${c.cat}</span></div>
-    <div><div class="k">Amende</div><div class="v">$0 - $${c.fine}</div></div>
-    <div><div class="k">Peine</div><div class="v">${c.pmin} Mois - ${c.pmax} Mois</div></div>
-    ${c.ref > 1 ? `<span class="ref">Peine max dès ${esc(qtyLabel(c, c.ref))}</span>` : ""}
+    <div class="top"><span class="t"><span class="code">${esc(c.code)}</span>${esc(c.name)}</span><span class="badge ${typeClass(c.type)}">${c.type}</span></div>
+    <div><div class="k">Amende</div><div class="v">${esc(fineLabel(c))}</div></div>
+    <div><div class="k">Peine (registre · MDT)</div><div class="v">${c.u2 ? esc(jailLabel(c)) : c.jail ? `${fmtReg(c.jail)} · ${fmtMDT(c.jail)}` : "Pas de prison"}</div></div>
+    ${c.annexe || c.nc ? `<div class="ref">${[c.annexe, c.nc ? "Non cumulable" : ""].filter(Boolean).map(esc).join(" · ")}</div>` : ""}
     <div class="row"><button type="button" class="btn sm ghost" data-edit="${c.id}">Modifier</button><button type="button" class="btn sm primary" data-add="${c.id}">Ajouter au rapport</button></div>
   </div>`).join("") : `<div class="empty">Aucune infraction trouvée.</div>`;
 }
@@ -823,29 +965,42 @@ $("isearch").addEventListener("input", renderCards);
 $("icat").addEventListener("change", renderCards);
 $("cards").addEventListener("click", e => {
   const add = e.target.closest("[data-add]");
-  if (add) { if (!state.charges.some(c => c.id === add.dataset.add)) state.charges.push({ id: add.dataset.add, qty: 1 }); state.example = false; changed(true); toast(`Ajoutée : ${byId(add.dataset.add).name}`); }
+  if (add) { if (!state.charges.some(c => c.id === add.dataset.add)) state.charges.push({ id: add.dataset.add, qty: byId(add.dataset.add).mode === "fixe" ? 1 : "" }); state.example = false; changed(true); toast(`Ajoutée : ${byId(add.dataset.add).code}`); }
   const ed = e.target.closest("[data-edit]"); if (ed) openModal(ed.dataset.edit);
 });
 let editing = null;
+function syncModal() {
+  const m = $("mMode").value;
+  $("fBase").hidden = m !== "base";
+  $("fUnit").hidden = m !== "par";
+  $("mRateLabel").textContent = m === "fixe" ? "Amende ($)" : m === "par" ? "Amende par unité ($)" : "Multiplicateur (ex. 2 = deux fois la somme)";
+}
 function openModal(id) {
   editing = id;
-  const c = id ? byId(id) : { name: "", cat: "DÉLIT", fine: 0, pmin: 0, pmax: 0, unit: "", ref: 1 };
+  const c = id ? byId(id) : { code: "", name: "", type: DM, mode: "fixe", rate: 0, base: 0, unit: "", jail: 0, annexe: "", nc: false };
   $("mTitle").textContent = id ? "Modifier l'infraction" : "Créer une infraction";
-  $("mName").value = c.name; $("mCat").value = c.cat; $("mFine").value = c.fine; $("mPmin").value = c.pmin;
-  $("mPmax").value = c.pmax; $("mUnit").value = c.unit; $("mRef").value = c.ref;
-  $("mDelete").hidden = !id; $("modal").hidden = false; $("mName").focus();
+  $("mCode").value = c.code; $("mName").value = c.name; $("mCat").value = c.type; $("mMode").value = c.mode;
+  $("mRate").value = c.rate; $("mBase").value = c.base; $("mUnit").value = c.mode === "par" ? c.unit : "";
+  $("mJail").value = c.jail; $("mAnnexe").value = c.annexe; $("mNc").checked = c.nc;
+  syncModal(); $("mDelete").hidden = !id; $("modal").hidden = false; $("mCode").focus();
 }
 const closeModal = () => { $("modal").hidden = true; editing = null; };
+$("mMode").addEventListener("change", syncModal);
 $("newInf").addEventListener("click", () => openModal(null));
 $("mCancel").addEventListener("click", closeModal);
 $("modal").addEventListener("mousedown", e => { if (e.target === $("modal")) closeModal(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("modal").hidden) closeModal(); });
 $("mForm").addEventListener("submit", e => {
   e.preventDefault();
-  const data = { name: $("mName").value.trim(), cat: $("mCat").value, fine: +$("mFine").value || 0, pmin: +$("mPmin").value || 0, pmax: +$("mPmax").value || 0, unit: $("mUnit").value.trim(), ref: Math.max(1, +$("mRef").value || 1) };
-  if (data.pmin > data.pmax) { toast("La peine minimale dépasse la peine maximale", true); return; }
+  const mode = $("mMode").value;
+  const data = {
+    code: $("mCode").value.trim().toUpperCase(), name: $("mName").value.trim(), type: $("mCat").value, mode,
+    rate: +$("mRate").value || 0, base: mode === "base" ? (+$("mBase").value || 0) : 0,
+    unit: mode === "par" ? ($("mUnit").value.trim() || "unité") : mode === "fixe" ? "" : "$",
+    jail: Math.max(0, Math.round(+$("mJail").value || 0)), annexe: $("mAnnexe").value.trim(), nc: $("mNc").checked,
+  };
   if (editing) Object.assign(byId(editing), data);
-  else { let id = slug(data.name) || "infraction"; while (byId(id)) id += "-2"; catalog.push({ id, ...data }); }
+  else { let nid = slug(data.code || data.name) || "infraction"; while (byId(nid)) nid += "-2"; catalog.push({ id: nid, u2: "", j2: 0, ...data }); }
   saveCatalog(); closeModal(); renderCards(); renderAll(); toast("Infraction enregistrée");
 });
 $("mDelete").addEventListener("click", () => {
@@ -854,10 +1009,10 @@ $("mDelete").addEventListener("click", () => {
 });
 let restoreArmed = false;
 $("restoreCat").addEventListener("click", () => {
-  if (!restoreArmed) { restoreArmed = true; $("restoreCat").textContent = "Confirmer la restauration ?"; setTimeout(() => { restoreArmed = false; $("restoreCat").textContent = "Restaurer la liste d'origine"; }, 3000); return; }
-  restoreArmed = false; $("restoreCat").textContent = "Restaurer la liste d'origine";
-  catalog = DEFAULT_CATALOG.map(o => ({ ...o })); store.del("lspd-catalog-v1");
-  state.charges = state.charges.filter(c => byId(c.id)); save(); renderCards(); renderAll(); toast("Liste d'origine restaurée");
+  if (!restoreArmed) { restoreArmed = true; $("restoreCat").textContent = "Confirmer la restauration ?"; setTimeout(() => { restoreArmed = false; $("restoreCat").textContent = "Restaurer le registre officiel"; }, 3000); return; }
+  restoreArmed = false; $("restoreCat").textContent = "Restaurer le registre officiel";
+  catalog = DEFAULT_CATALOG.map(o => ({ ...o })); store.del(CAT_KEY);
+  state.charges = state.charges.filter(c => byId(c.id)); save(); renderCards(); renderAll(); toast("Registre officiel restauré");
 });
 
 /* ---------- navigation (#rapport / #infractions) ---------- */
